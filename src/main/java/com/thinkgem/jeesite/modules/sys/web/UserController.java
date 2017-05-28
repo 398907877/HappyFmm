@@ -81,6 +81,23 @@ public class UserController extends BaseController {
 		return page;
 	}
 
+	@RequestMapping(value = "rewardList")
+	public String rewardList(RewardDetail rewardDetail, HttpServletRequest request, HttpServletResponse response, Model model) {
+		rewardDetail.setUser(UserUtils.getUser());
+		Page<RewardDetail> page = systemService.findRewardDetail(new Page<RewardDetail>(request, response), rewardDetail);
+		model.addAttribute("page", page);
+		return "modules/sys/rewardList";
+	}
+
+	@ResponseBody
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = {"rewardListData"})
+	public Page<RewardDetail> rewardListData(RewardDetail rewardDetail, HttpServletRequest request, HttpServletResponse response, Model model) {
+		rewardDetail.setUser(UserUtils.getUser());
+		Page<RewardDetail> page = systemService.findRewardDetail(new Page<RewardDetail>(request, response), rewardDetail);
+		return page;
+	}
+
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "form")
 	public String form(User user, Model model) {
@@ -414,7 +431,6 @@ public class UserController extends BaseController {
 	//@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "userTreeView")
 	public String userTreeView(String type, Model model) {
-		System.out.print(type);
 		model.addAttribute("type", type);
 		return "modules/sys/userTree";
 	}

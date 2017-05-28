@@ -6,6 +6,7 @@ package com.thinkgem.jeesite.modules.sys.service;
 import java.math.BigDecimal;
 import java.util.*;
 
+import com.thinkgem.jeesite.modules.sys.dao.RewardDetailDao;
 import com.thinkgem.jeesite.modules.sys.entity.*;
 import com.thinkgem.jeesite.modules.sys.utils.DictUtils;
 import org.activiti.engine.IdentityService;
@@ -48,6 +49,8 @@ public class SystemService extends BaseService implements InitializingBean {
 	
 	@Autowired
 	private UserDao userDao;
+	@Autowired
+	private RewardDetailDao rewardDetailDao;
 	@Autowired
 	private RoleDao roleDao;
 	@Autowired
@@ -93,7 +96,20 @@ public class SystemService extends BaseService implements InitializingBean {
 		page.setList(userDao.findList(user));
 		return page;
 	}
-	
+
+	/**
+	 * 分页查询奖励明细
+	 * @param page
+	 * @param rewardDetail
+	 * @return
+	 */
+	public Page<RewardDetail> findRewardDetail(Page<RewardDetail> page, RewardDetail rewardDetail) {
+		// 设置分页参数
+		rewardDetail.setPage(page);
+		// 执行分页查询
+		page.setList(rewardDetailDao.findList(rewardDetail));
+		return page;
+	}
 	/**
 	 * 无分页查询人员列表
 	 * @param user
@@ -239,17 +255,39 @@ public class SystemService extends BaseService implements InitializingBean {
 	 * @param point 分数
 	 */
 	private void countReward(User rewardUser,String percent,String point,String type){
-		BigDecimal wkf = new BigDecimal(percent).multiply(new BigDecimal(point))
+		BigDecimal rewardPoint = new BigDecimal(percent).multiply(new BigDecimal(point));
+		BigDecimal wkf = rewardPoint
 				.multiply(new BigDecimal("0.9"));
-		BigDecimal yxf = new BigDecimal(percent).multiply(new BigDecimal(point))
+		BigDecimal yxf = rewardPoint
 				.multiply(new BigDecimal("0.05"));
-		BigDecimal gwf = new BigDecimal(percent).multiply(new BigDecimal(point))
+		BigDecimal gwf = rewardPoint
 				.multiply(new BigDecimal("0.05"));
 		rewardUser.setWkf(new BigDecimal(rewardUser.getWkf()).add(wkf).toString());
 		rewardUser.setYxf(new BigDecimal(rewardUser.getYxf()).add(yxf).toString());
 		rewardUser.setGwf(new BigDecimal(rewardUser.getGwf()).add(gwf).toString());
-		System.out.println(point + "---" + percent);
-		System.out.println(rewardUser.getLoginName()+type+"---"+wkf+"---"+yxf+"----"+gwf);
+
+		RewardDetail rewardDetail = new RewardDetail();
+		rewardDetail.setUser(rewardUser);
+		rewardDetail.setGwf(gwf.toString());
+		rewardDetail.setWkf(wkf.toString());
+		rewardDetail.setYxf(yxf.toString());
+		if("ld".equals(type)){
+			rewardDetail.setTj("0");
+			rewardDetail.setLd(rewardPoint.toString());
+			rewardDetail.setDp("0");
+		}
+		if("dp".equals(type)){
+			rewardDetail.setTj("0");
+			rewardDetail.setLd("0");
+			rewardDetail.setDp(rewardPoint.toString());
+		}
+		if("tj".equals(type)){
+			rewardDetail.setTj(rewardPoint.toString());
+			rewardDetail.setDp("0");
+			rewardDetail.setLd("0");
+		}
+		rewardDetail.preInsert();
+		rewardDetailDao.insert(rewardDetail);
 		rewardUser.preUpdate();
 		userDao.update(rewardUser);
 	}

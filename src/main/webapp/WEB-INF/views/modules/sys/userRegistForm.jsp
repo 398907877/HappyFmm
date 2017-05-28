@@ -118,10 +118,11 @@
 		<div class="control-group">
 			<label class="control-label">用户级别:</label>
 			<div class="controls">
-				<form:select path="level" class="input-xlarge">
+				<form:select path="level" class="input-xlarge" cssClass="required" cssStyle="width:220px">
 					<form:option value="" label="请选择"/>
 					<form:options items="${fns:getDictList('USER_LEVEL')}" itemLabel="label" itemValue="value" htmlEscape="false"/>
 				</form:select>
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">

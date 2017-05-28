@@ -30,6 +30,7 @@
 		<li><a href="${ctx}/sys/user/modifyPwd">修改密码</a></li>
 		<li><a href="${ctx}/sys/user/userTreeView?type=0">接点树</a></li>
 		<li><a href="${ctx}/sys/user/userTreeView?type=1">推荐树</a></li>
+		<li><a href="${ctx}/sys/user/rewardList">奖励明细</a></li>
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="user" action="${ctx}/sys/user/info" method="post" class="form-horizontal"><%--
 		<form:hidden path="email" htmlEscape="false" maxlength="255" class="input-xlarge"/>
