@@ -6,7 +6,7 @@
 	<title>${fns:getConfig('productName')} 登录</title>
 	<meta name="decorator" content="blank"/>
 	<style type="text/css">
-      html,body,table{background-color:#f5f5f5;width:100%;text-align:center;}.form-signin-heading{font-family:Helvetica, Georgia, Arial, sans-serif, 黑体;font-size:36px;margin-bottom:20px;color:#0663a2;}
+      html,body,table{background-color:#f5f5f5;width:100%;text-align:center;background-image:url(http://localhost:8181/happyApp/userfiles/1/files/Dubai.jpg); background-size:100% 100%;background-size:100% 100%;background-repeat:no-repeat; background-attachment: fixed;}.form-signin-heading{font-family:Helvetica, Georgia, Arial, sans-serif, 黑体;font-size:36px;margin-bottom:20px;color:#F7F2F6;}
       .form-signin{position:relative;text-align:left;width:300px;padding:25px 29px 29px;margin:0 auto 20px;background-color:#fff;border:1px solid #e5e5e5;
         	-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px;-webkit-box-shadow:0 1px 2px rgba(0,0,0,.05);-moz-box-shadow:0 1px 2px rgba(0,0,0,.05);box-shadow:0 1px 2px rgba(0,0,0,.05);}
       .form-signin .checkbox{margin-bottom:10px;color:#0663a2;} .form-signin .input-label{font-size:16px;line-height:23px;color:#999;}
@@ -39,13 +39,16 @@
 		}
 	</script>
 </head>
-<body>
+<body  >
+
 	<!--[if lte IE 6]><br/><div class='alert alert-block' style="text-align:left;padding-bottom:10px;"><a class="close" data-dismiss="alert">x</a><h4>温馨提示：</h4><p>你使用的浏览器版本过低。为了获得更好的浏览体验，我们强烈建议您 <a href="http://browsehappy.com" target="_blank">升级</a> 到最新版本的IE浏览器，或者使用较新版本的 Chrome、Firefox、Safari 等。</p></div><![endif]-->
-	<div class="header">
+	<div  class="header">
 		<div id="messageBox" class="alert alert-error ${empty message ? 'hide' : ''}"><button data-dismiss="alert" class="close">×</button>
 			<label id="loginError" class="error">${message}</label>
 		</div>
 	</div>
+	
+	 
 	<h1 class="form-signin-heading">${fns:getConfig('productName')}</h1>
 	<form id="loginForm" class="form-signin" action="${ctx}/login" method="post">
 		<label class="input-label" for="username">登录名</label>
@@ -68,8 +71,9 @@
 		</div>
 	</form>
 	<div class="footer">
-		Copyright &copy; 2012-${fns:getConfig('copyrightYear')} <a href="${pageContext.request.contextPath}${fns:getFrontPath()}">${fns:getConfig('productName')}</a> - Powered By <a href="http://jeesite.com" target="_blank">JeeSite</a> ${fns:getConfig('version')} 
+		Copyright &copy; ${fns:getConfig('copyrightYear')}-2088 <a  style="color: white;" href="#">${fns:getConfig('productName')}</a> - Powered By <a href="#" style="color: white;" target="_blank">WUJIAJUN-TEAM</a> ${fns:getConfig('version')} 
 	</div>
 	<script src="${ctxStatic}/flash/zoom.min.js" type="text/javascript"></script>
+
 </body>
 </html>
