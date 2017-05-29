@@ -32,6 +32,7 @@ import com.thinkgem.jeesite.modules.equity.entity.EquitySell;
 import com.thinkgem.jeesite.modules.financial.entity.FclWkJh;
 import com.thinkgem.jeesite.modules.financial.service.FclWkJhService;
 import com.thinkgem.jeesite.modules.sys.entity.User;
+import com.thinkgem.jeesite.modules.sys.service.SystemService;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 
 /**
@@ -45,6 +46,8 @@ public class FclWkJhController extends BaseController {
 
 	@Autowired
 	private FclWkJhService fclWkJhService;
+	@Autowired
+	private SystemService systemService;
 	
 	@ModelAttribute
 	public FclWkJh get(@RequestParam(required=false) String id) {
@@ -103,16 +106,12 @@ public class FclWkJhController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/financial/fclWkJh/?repage";
 	}
 
-	/**
-	 * 用户信息显示及保存
-	 * @param user
-	 * @param model
-	 * @return
-	 */
-	@RequiresPermissions("financial:fclWkJh:view")
-	@RequestMapping(value = "wkInfo")
-	public String wkInfo() {
-		return "modules/financial/fclWkJhInfo";
+	@RequiresPermissions("financial:fclWkJh:edit")
+	@RequestMapping(value = "getUserInfo")
+	@ResponseBody
+	public User getUserInfo() {
+		User user = UserUtils.getUser();
+		return fclWkJhService.getUserInfo(user.getId());
 	}
 	
 }

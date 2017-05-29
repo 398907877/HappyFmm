@@ -11,6 +11,7 @@
 		a.create_date AS "createDate",
 		a.repeal_flag AS "repealFlag",
 		a.remarks AS "remarks",
+		a.trading_money*a.buy_num AS "totalMoney",
 		s.login_name AS "user.loginName",
 		s.name AS "user.name"
 	</sql>
@@ -24,7 +25,7 @@
 		SELECT 
 			<include refid="equitySellColumns"/>
 		FROM equity_sell a
-		
+		LEFT JOIN sys_user s ON a.trading_id=s.id
 		WHERE a.id = #{id}
 	</select>
 	
@@ -39,8 +40,18 @@
 		SELECT 
 			<include refid="equitySellColumns"/>
 		FROM equity_sell a
-		LEFT JOIN sys_user s ON a.trading_id=s.id
+		JOIN sys_user s ON a.trading_id=s.id
+		
 		where a.repeal_flag='0'
+		<if test="loginName != null and loginName != ''">
+			AND s.login_name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{loginName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{loginName}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{loginName}, '%')</if>
+		</if>
+		<if test="!currentUser.admin">
+			AND a.trading_id=#{tradingId}
+		</if>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
@@ -75,10 +86,10 @@
 	</select>
 	<select id="getSellList" resultType="EquitySell">
 		SELECT 
-			<include refid="equitySellColumns"/>
+			*
 		FROM equity_sell a
 		
-		WHERE a.buy_num != '0' and id=#{id}
+		WHERE a.buy_num != '0' and a.id=#{id}
 	</select>
 	<insert id="insert">
 		INSERT INTO equity_sell(

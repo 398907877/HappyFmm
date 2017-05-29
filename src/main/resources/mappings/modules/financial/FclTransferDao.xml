@@ -14,6 +14,7 @@
 		u.login_name AS "user.loginName",
 		u.name AS "user.name",
 		su.login_name AS "username",
+		su.name AS "uname",
 		su.id AS "user.userid"
 	</sql>
 	
@@ -35,10 +36,22 @@
 		SELECT 
 			<include refid="fclTransferColumns"/>
 		FROM fcl_transfer a
-		<include refid="fclTransferJoins"/>
+		JOIN sys_user u ON u.id=a.outnumber_id
+		JOIN sys_user su ON su.id=a.intonumber_id
 		<where>
 			
-		
+		<if test="loginName != null and loginName != ''">
+			AND u.login_name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{loginName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{loginName}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{loginName}, '%')</if>
+		</if>
+		<if test="username != null and username != ''">
+			AND su.login_name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{username}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{username}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{username}, '%')</if>
+		</if>
 		<if test="!currentUser.admin">
 			AND a.outnumber_id=#{outnumberId}
 		</if>
@@ -72,6 +85,12 @@
 				ORDER BY a.create_date desc
 			</otherwise>
 		</choose>
+	</select>
+	
+	<select id="getUserInfo" resultType="User">
+		SELECT 
+			* from sys_user a
+		WHERE a.id = #{id}
 	</select>
 	
 	<insert id="insert">

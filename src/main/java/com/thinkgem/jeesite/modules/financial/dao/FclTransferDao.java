@@ -37,4 +37,6 @@ public interface FclTransferDao extends CrudDao<FclTransfer> {
 	 */
 	public void updateUserOutQz(FclTransfer fclTransfer);
 	
+	public User getUserInfo(String userid);
+	
 }

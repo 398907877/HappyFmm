@@ -26,8 +26,8 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>姓名：</label><sys:treeselect id="user" name="user.id" value="${fclWithdraw.user.id}" labelName="user.name" labelValue="${fclWithdraw.user.name}" 
-			title="用户" url="/sys/office/treeData?type=3" cssStyle="width:150px" allowClear="true" notAllowSelectParent="true"/>
+			<li><label>转出姓名：</label>
+				<form:input path="loginName" htmlEscape="false" maxlength="200" class="input-medium"/>
 			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
@@ -37,8 +37,11 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>转出编号</th>
-				<th>转账金额</th>
+				<th>转出登录名</th>
+				<th>转出姓名</th>
+				<th>提现金额</th>
+				<th>手续费</th>
+				<th>实发金额</th>
 				<th>创建时间</th>
 			</tr>
 			
@@ -46,8 +49,11 @@
 		<tbody>
 		<c:forEach items="${page.list}" var="fclWithdraw">
 			<tr>
+				<td>${fclWithdraw.user.loginName}</td>
 				<td>${fclWithdraw.user.name}</td>
 				<td>${fclWithdraw.money}</td>
+				<td>${fclWithdraw.money*0.1}</td>
+				<td>${fclWithdraw.money*0.9}</td>
 				<td>
 					<fmt:formatDate value="${fclWithdraw.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>

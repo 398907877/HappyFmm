@@ -21,6 +21,8 @@ public class FclWkJh extends DataEntity<FclWkJh> {
 	private String intonumberId;		// 转入编号
 	private String changetype;		// 转账类型
 	private String money;		// 转账金额
+	private String loginName;		//转出登录名
+	private String intoName;			//转出登录名
 	
 	public FclWkJh() {
 		super();
@@ -65,6 +67,23 @@ public class FclWkJh extends DataEntity<FclWkJh> {
 	public void setMoney(String money) {
 		this.money = money;
 	}
+	public String getLoginName() {
+		return loginName;
+	}
+
+	public void setLoginName(String loginName) {
+		this.loginName = loginName;
+	}
+
+
+	public String getIntoName() {
+		return intoName;
+	}
+
+	public void setIntoName(String intoName) {
+		this.intoName = intoName;
+	}
+
 	public User getUser() {
 		return user;
 	}

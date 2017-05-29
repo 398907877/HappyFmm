@@ -26,6 +26,9 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
+			<li><label>购买登录名：</label>
+				<form:input path="loginName" htmlEscape="false" maxlength="200" class="input-medium"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -34,7 +37,8 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>购买人</th>
+				<th>购买登录名</th>
+				<th>购买姓名</th>
 				<th>购买数量</th>
 				<th>购买金额</th>
 				<th>创建时间</th>
@@ -44,6 +48,7 @@
 		<c:forEach items="${page.list}" var="equityBuy">
 			<tr>
 				<td>${equityBuy.user.loginName}</td>
+				<td>${equityBuy.user.name}</td>
 				<td>${equityBuy.buyNum}</td>
 				<td>${equityBuy.buyMoney}</td>
 				<td>

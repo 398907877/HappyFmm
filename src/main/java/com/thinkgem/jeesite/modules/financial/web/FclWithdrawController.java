@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.thinkgem.jeesite.common.config.Global;
@@ -88,4 +89,11 @@ public class FclWithdrawController extends BaseController {
 		return "redirect:"+Global.getAdminPath()+"/financial/fclWithdraw/?repage";
 	}
 
+	@RequiresPermissions("financial:fclWithdraw:edit")
+	@RequestMapping(value = "getUserInfo")
+	@ResponseBody
+	public User getUserInfo() {
+		User user = UserUtils.getUser();
+		return fclWithdrawService.getUserInfo(user.getId());
+	}
 }

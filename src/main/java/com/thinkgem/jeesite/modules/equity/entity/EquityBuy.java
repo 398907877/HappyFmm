@@ -20,10 +20,11 @@ public class EquityBuy extends DataEntity<EquityBuy> {
 	private static final long serialVersionUID = 1L;
 	private EquitySell equitySell;
 	private String equitySellId;		// equity_sell表id
-	private String buyNum;		// 购买数量
-	private String buyMoney;		// 购买金额
-	private String buyUserid;		//购买人id
+	private String buyNum;				// 购买数量
+	private String buyMoney;			// 购买金额
+	private String buyUserid;			//购买人id
 	private User user;
+	private String loginName;			//购买人登录名
 	
 	
 	public EquityBuy() {
@@ -83,6 +84,14 @@ public class EquityBuy extends DataEntity<EquityBuy> {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public String getLoginName() {
+		return loginName;
+	}
+
+	public void setLoginName(String loginName) {
+		this.loginName = loginName;
 	}
 
 	

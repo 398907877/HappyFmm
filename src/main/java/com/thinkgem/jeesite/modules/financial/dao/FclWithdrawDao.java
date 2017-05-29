@@ -6,6 +6,7 @@ package com.thinkgem.jeesite.modules.financial.dao;
 import com.thinkgem.jeesite.common.persistence.CrudDao;
 import com.thinkgem.jeesite.common.persistence.annotation.MyBatisDao;
 import com.thinkgem.jeesite.modules.financial.entity.FclWithdraw;
+import com.thinkgem.jeesite.modules.sys.entity.User;
 
 /**
  * 挖矿分提现DAO接口
@@ -20,5 +21,7 @@ public interface FclWithdrawDao extends CrudDao<FclWithdraw> {
 	 * @param fclWithdraw
 	 */
 	public void updateUserWkf(FclWithdraw fclWithdraw);
+
+	public User getUserInfo(String userid);
 	
 }

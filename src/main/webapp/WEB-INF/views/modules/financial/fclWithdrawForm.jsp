@@ -5,19 +5,21 @@
 	<title>挖矿分提现管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
-		$(document).ready(function() {
+	var wkf = "";	
+	$(document).ready(function() {
 			//$("#name").focus();
 			
 				$.ajax({ 
 					type: "post", 
-					url : "${ctx}/sys/user/infoData", 
+					url : "${ctx}/financial/fclWithdraw/getUserInfo", 
 					dataType:'json',
 					data: {}, 
 					success: function(json){
-						var wkf = json.wkf;
+						wkf = json.wkf;
+						$("#tmoney").html("现有挖矿分"+ wkf);
 						if(wkf == 0){
-							alert("用户挖矿分为零，无法提现！");
-							$("#money").attr("readonly",true);
+							alert("现有挖矿分为零，不能提现！");
+							$("#money").attr("readOnly",true);
 						}
 					}
 				}); 
@@ -38,6 +40,15 @@
 				}
 			});
 		});
+		
+		function checkMoney(){
+			var money = $("#money").val();
+			if(money>wkf){
+				alert("提现金额超过现有挖矿分，请重新填写！");
+				$("#money").val("");
+				return false;
+			}
+		}
 	</script>
 </head>
 <body>
@@ -52,14 +63,15 @@
 		<div class="control-group">
 			<label class="control-label">提现金额：</label>
 			<div class="controls">
-				<form:input path="money" htmlEscape="false" maxlength="100" class="input-xlarge required transMoney"/>
+				<form:input path="money" htmlEscape="false" maxlength="100" class="input-xlarge required transMoney" onchange="checkMoney()" id="money"/>
 				<span class="help-inline"><font color="red">*</font> </span>
+				<span id="tmoney" style="color:red"></span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">备注信息：</label>
 			<div class="controls">
-				<form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="255" class="input-xxlarge "/>
+				<form:textarea path="remarks" htmlEscape="false" rows="3" maxlength="255" class="input-xxlarge " style="width:270px"/>
 			</div>
 		</div>
 		<div class="form-actions">

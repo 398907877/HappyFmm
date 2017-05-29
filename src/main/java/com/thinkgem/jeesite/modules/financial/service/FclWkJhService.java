@@ -13,6 +13,7 @@ import com.thinkgem.jeesite.common.persistence.Page;
 import com.thinkgem.jeesite.common.service.CrudService;
 import com.thinkgem.jeesite.modules.financial.entity.FclWkJh;
 import com.thinkgem.jeesite.modules.financial.dao.FclWkJhDao;
+import com.thinkgem.jeesite.modules.sys.entity.User;
 
 /**
  * 挖矿分转换Service
@@ -61,5 +62,10 @@ public class FclWkJhService extends CrudService<FclWkJhDao, FclWkJh> {
 	@Transactional(readOnly = false)
 	public void updateUserZyy(FclWkJh fclWkJh) {
 		fclWkJhDao.updateUserZyy(fclWkJh);
+	}
+
+	public User getUserInfo(String userid) {
+		// TODO Auto-generated method stub
+		return fclWkJhDao.getUserInfo(userid);
 	}
 }

@@ -22,10 +22,10 @@ public class EquitySell extends DataEntity<EquitySell> {
 	private String tradingNum;		// 交易数量
 	private String buyNum;			// 已购买数量
 	private String tradingMoney;		// 交易金额
+	private String totalMoney;		//总金额
 	private String repealFlag;		//撤销标志
-	private Date startDate;			//开始时间
-	private Date endDate;			//结束时间
-	private User user;				
+	private User user;
+	private String loginName;		//卖出登录名
 	
 	public EquitySell() {
 		super();
@@ -71,6 +71,14 @@ public class EquitySell extends DataEntity<EquitySell> {
 	}
 	
 
+	public String getTotalMoney() {
+		return totalMoney;
+	}
+
+	public void setTotalMoney(String totalMoney) {
+		this.totalMoney = totalMoney;
+	}
+
 	public String getRepealFlag() {
 		return repealFlag;
 	}
@@ -79,27 +87,19 @@ public class EquitySell extends DataEntity<EquitySell> {
 		this.repealFlag = repealFlag;
 	}
 
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
 	public User getUser() {
 		return user;
 	}
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public String getLoginName() {
+		return loginName;
+	}
+
+	public void setLoginName(String loginName) {
+		this.loginName = loginName;
 	}
 }

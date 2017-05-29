@@ -19,9 +19,11 @@ public class FclTransfer extends DataEntity<FclTransfer> {
 	private User user;				//转账用户
 	private String outnumberId;		// 转出编号
 	private String intonumberId;		// 转入编号
-	private String username;		//转入名称
+	private String username;		//转入登录名
+	private String uname;			//转入姓名
 	private String transMoney;		// 转账金额
 	private String transType;		//转账类型
+	private String loginName;		//转出登录名
 	
 	public FclTransfer() {
 		super();
@@ -58,6 +60,14 @@ public class FclTransfer extends DataEntity<FclTransfer> {
 		this.username = username;
 	}
 
+	public String getUname() {
+		return uname;
+	}
+
+	public void setUname(String uname) {
+		this.uname = uname;
+	}
+
 	@Length(min=1, max=64, message="转账金额长度必须介于 1 和 64 之间")
 	public String getTransMoney() {
 		return transMoney;
@@ -73,6 +83,14 @@ public class FclTransfer extends DataEntity<FclTransfer> {
 
 	public void setTransType(String transType) {
 		this.transType = transType;
+	}
+
+	public String getLoginName() {
+		return loginName;
+	}
+
+	public void setLoginName(String loginName) {
+		this.loginName = loginName;
 	}
 
 	public User getUser() {

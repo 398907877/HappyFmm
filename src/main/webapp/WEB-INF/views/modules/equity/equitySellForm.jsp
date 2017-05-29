@@ -7,6 +7,19 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			//$("#name").focus();
+			
+			$.ajax({ 
+					type: "post", 
+					url : "${ctx}/financial/fclTransfer/getUserInfo", 
+					dataType:'json',
+					data: {}, 
+					success: function(json){
+						user = json;
+						var happyfood = json.happyfood;
+						$("#happyfood").html("现有股票"+happyfood);
+					}
+				}); 
+			
 			$("#inputForm").validate({
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
@@ -23,6 +36,16 @@
 				}
 			});
 		});
+		
+		function checkTradingNum(){
+			var tradingNum = $("#tradingNum").val();
+			var happyfood = user.happyfood;
+			if(parseInt(tradingNum) > parseInt(happyfood)){
+				alert("卖出数量超过现有数量，请重新填写");
+				$("#tradingNum").val("");
+				return false;
+			}
+		}
 	</script>
 </head>
 <body>
@@ -37,7 +60,9 @@
 		<div class="control-group">
 			<label class="control-label">交易数量：</label>
 			<div class="controls">
-				<form:input path="tradingNum" htmlEscape="false" maxlength="100" class="input-xlarge "/>
+				<form:input path="tradingNum" htmlEscape="false" maxlength="100" class="input-xlarge required" id="tradingNum" onchange="checkTradingNum()"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+				<span id="happyfood" style="color:red"></span>
 			</div>
 		</div>
 		<div class="control-group">
@@ -49,8 +74,8 @@
 		</div>
 		<div class="control-group">
 			<label class="control-label">备注信息：</label>
-			<div class="controls">
-				<form:textarea path="remarks" htmlEscape="false" rows="4" maxlength="255" class="input-xxlarge "/>
+			<div class="controls" >
+				<form:textarea path="remarks" htmlEscape="false" rows="4" maxlength="255" class="input-xxlarge " style="width:270px"/>
 			</div>
 		</div>
 		<div class="form-actions">

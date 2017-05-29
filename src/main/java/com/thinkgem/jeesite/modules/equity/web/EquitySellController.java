@@ -62,7 +62,10 @@ public class EquitySellController extends BaseController {
 	@RequiresPermissions("equity:equitySell:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(EquitySell equitySell, HttpServletRequest request, HttpServletResponse response, Model model) {
+		User user = UserUtils.getUser();
+		equitySell.setTradingId(user.getId());
 		Page<EquitySell> page = equitySellService.findPage(new Page<EquitySell>(request, response), equitySell); 
+		
 		model.addAttribute("page", page);
 		return "modules/equity/equitySellList";
 	}
@@ -84,7 +87,7 @@ public class EquitySellController extends BaseController {
 		equitySell.setTradingId(user.getId());
 		equitySellService.save(equitySell);
 		addMessage(redirectAttributes, "保存股票卖成功");
-		return "redirect:"+Global.getAdminPath()+"/equity/equitySell/list";
+		return "redirect:"+Global.getAdminPath()+"/equity/equitySell?repage";
 	}
 	
 	@RequiresPermissions("equity:equitySell:edit")
@@ -92,7 +95,7 @@ public class EquitySellController extends BaseController {
 	public String delete(EquitySell equitySell, RedirectAttributes redirectAttributes) {
 		equitySellService.delete(equitySell);
 		addMessage(redirectAttributes, "删除股票卖成功");
-		return "redirect:"+Global.getAdminPath()+"/equity/equitySell/?repage";
+		return "redirect:"+Global.getAdminPath()+"/equity/equitySell/list?repage";
 	}
 
 	@ResponseBody
@@ -102,38 +105,6 @@ public class EquitySellController extends BaseController {
 		
 		EquitySell es = equitySellService.getMoney(equitySell);
 		
-//		List<Map<String, Object>> mapList = Lists.newArrayList();
-//		List<EquitySell> list = equitySellService.getMoney(equitySell);
-//		float tradingMoney = 0.0f;
-//		String tradingNum = "";
-//		String buyNum = "";
-//		String tradingId = "";
-//		int num = 0;
-//		Map<String, Object> map = Maps.newHashMap();
-//		if(list.size()>0){
-//			tradingMoney = Float.parseFloat(list.get(0).getTradingMoney());
-//			tradingNum = list.get(0).getTradingNum();
-//			buyNum = list.get(0).getBuyNum();
-//			tradingId = list.get(0).getId();
-//			for(int i=1;i<list.size();i++){
-//				
-//				EquitySell et = list.get(i);
-//				float mm = Float.parseFloat(et.getTradingMoney());
-//				if(tradingMoney > mm){
-//					tradingMoney = mm;
-//					tradingNum = et.getTradingNum();
-//					buyNum = et.getBuyNum();
-//					tradingId = et.getId();
-//				}
-//			}
-//			num = Integer.parseInt(tradingNum)-Integer.parseInt(buyNum);
-//		}
-//		
-//		map.put("tradingId", tradingId);
-//		map.put("tradingMoney", tradingMoney);
-//		map.put("tradingNum", tradingNum);
-//		map.put("buyNum", String.valueOf(num));
-//		mapList.add(map);
 		return es;
 	}
 	
@@ -148,14 +119,8 @@ public class EquitySellController extends BaseController {
 			addMessage(redirectAttributes, "撤销股票成功");
 		}
 		
-		return "redirect:"+Global.getAdminPath()+"/equity/equitySell/?repage";
+		return "redirect:"+Global.getAdminPath()+"/equity/equitySell/list?repage";
 	}
 	
-	@RequiresPermissions("equity:equitySell:view")
-	@RequestMapping(value = {"sellList", ""})
-	public String sellList(EquitySell equitySell, HttpServletRequest request, HttpServletResponse response, Model model) {
-		Page<EquitySell> page = equitySellService.findPage(new Page<EquitySell>(request, response), equitySell); 
-		model.addAttribute("page", page);
-		return "modules/equity/equityGencyList";
-	}
+	
 }

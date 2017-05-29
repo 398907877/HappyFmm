@@ -123,4 +123,12 @@ public class FclTransferController extends BaseController {
 		}
 		return "true";
 	}
+	
+	@RequiresPermissions("financial:fclTransfer:edit")
+	@RequestMapping(value = "getUserInfo")
+	@ResponseBody
+	public User getUserInfo() {
+		User user = UserUtils.getUser();
+		return fclTransferService.getUserInfo(user.getId());
+	}
 }

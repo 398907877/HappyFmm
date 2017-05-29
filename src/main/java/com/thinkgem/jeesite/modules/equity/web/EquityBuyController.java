@@ -74,39 +74,17 @@ public class EquityBuyController extends BaseController {
 
 	@RequiresPermissions("equity:equityBuy:view")
 	@RequestMapping(value = "form")
-	public String form(EquityBuy equityBuy,HttpServletRequest request, HttpServletResponse response, Model model,RedirectAttributes redirectAttributes) {
-//		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-//		String date = df.format(new Date());
-//		String startDate = date + " 00:00:00";
-//		String endDate = date + " 23:59:59";
-//		df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//		
-//		try {
-//			equitySell.setStartDate(df.parse(startDate));
-//			equitySell.setEndDate(df.parse(endDate));
-//		} catch (ParseException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-		EquitySell es = new EquitySell();
-		EquitySell equitySell = equitySellService.getMoney(es);
-		if(equitySell != null){
+	public String form(EquityBuy equityBuy, Model model) {
 			model.addAttribute("equityBuy", equityBuy);
-			
-		}else {
-			addMessage(redirectAttributes, "暂时没有股票可买");
-			list(equityBuy, request, response, model);
-			return "redirect:"+Global.getAdminPath()+"/equity/equityBuy/?repage";
-		}
 		
 		return "modules/equity/equityBuyForm";
 	}
 
 	@RequiresPermissions("equity:equityBuy:edit")
 	@RequestMapping(value = "save")
-	public String save(EquityBuy equityBuy, Model model,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+	public String save(EquityBuy equityBuy, Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, equityBuy)){
-			return form(equityBuy,request ,response,model,redirectAttributes);
+			return form(equityBuy,model);
 		}
 		User user = UserUtils.getUser();
 		equityBuy.setBuyUserid(user.getId());

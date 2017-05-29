@@ -26,8 +26,11 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
-			<li><label>姓名：</label><sys:treeselect id="user" name="user.id" value="${fclWkJh.user.id}" labelName="user.name" labelValue="${fclWkJh.user.name}" 
-			title="用户" url="/sys/office/treeData?type=3" cssStyle="width:150px" allowClear="true" notAllowSelectParent="true"/>
+			<li><label>转出姓名：</label>
+				<form:input path="loginName" htmlEscape="false" maxlength="200" class="input-medium"/>
+			</li>
+			<li><label>转入姓名：</label>
+				<form:input path="intoName" htmlEscape="false" maxlength="200" class="input-medium"/>
 			</li>
 			<li><label>转换类型：</label>
 				<form:select path="changetype" class="input-medium">
@@ -44,8 +47,10 @@
 		<thead>
 			<tr>
 				<th>转换类型</th>
-				<th>转出编号</th>
-				<th>转入编号</th>
+				<th>转出登录名</th>
+				<th>转出姓名</th>
+				<th>转入登录名</th>
+				<th>转出姓名</th>
 				<th>转换金额</th>
 				<th>创建时间</th>
 			</tr>
@@ -56,7 +61,9 @@
 				<td>
 					${fns:getDictLabel(fclWkJh.changetype, 'fcl_wk_change', '')}
 				</td>
+				<td>${fclWkJh.user.loginName}</td>
 				<td>${fclWkJh.user.name}</td>
+				<td>${fclWkJh.user.loginName}</td>
 				<td>${fclWkJh.user.name}</td>
 				<td>${fclWkJh.money}</td>
 				<td>

@@ -5,8 +5,25 @@
 	<title>挖矿分转换管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
-		$(document).ready(function() {
+	var wkf = "";	
+	$(document).ready(function() {
 			//$("#name").focus();
+			
+			$.ajax({ 
+				type: "post", 
+				url : "${ctx}/financial/fclWkJh/getUserInfo", 
+				dataType:'json',
+				data: {}, 
+				success: function(json){
+					wkf = json.wkf;
+					$("#tmoney").html("现有挖矿分"+wkf);
+					if(wkf == 0){
+						alert("现有挖矿分为零，不能转换！");
+						$("#money").attr("readOnly",true);
+					}
+				}
+			}); 		
+			
 			$("#inputForm").validate({
 				submitHandler: function(form){
 					loading('正在提交，请稍等...');
@@ -24,20 +41,13 @@
 			});
 		});
 		
-		function getUserInfo(){
-			$.ajax({ 
-				type: "post", 
-				url : "${ctx}/sys/user/infoData", 
-				dataType:'json',
-				data: {}, 
-				success: function(json){
-					var wkf = json.wkf;
-					if(wkf == 0){
-						alert("用户挖矿分为零，无法转换！");
-						$("#money").attr("readonly",true);
-					}
-				}
-			}); 
+		function checkMoney(){
+			var money = $("#money").val();
+			if(parseInt(money)> parseInt(wkf)){
+				alert("转换金额超过现有挖矿分，请重新填写！");
+				$("#money").val("");
+				return false;
+			}
 		}
 	</script>
 </head>
@@ -54,18 +64,20 @@
 		<div class="control-group">
 			<label class="control-label">转换类型：</label>
 			<div class="controls" style="width:220px">
-				<form:select path="changetype" class="input-xlarge required" style="width:210px" onchange="getUserInfo()">
-					<form:option value="" label=""/>
-					<form:options items="${fns:getDictList('fcl_wk_change')}" itemLabel="label" itemValue="value" htmlEscape="false" style="width:210px"/>
-				</form:select>
+				<select id="changetype" name="changetype" class="required input-medium"  style="width:210px" >
+					<c:forEach items="${fns:getDictList('fcl_wk_change')}" var="dict">
+						<option value="${dict.value}">${dict.label}</option>
+					</c:forEach>
+				</select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>	
 		<div class="control-group">
 			<label class="control-label">转换金额:</label>
 			<div class="controls">
-				<input name="money"  maxlength="50" class="nput-xlarge required money" id="money"/>
+				<form:input path="money" htmlEscape="false" maxlength="100" class="input-xlarge required money" onchange="checkMoney()" id="money"/>
 				<span class="help-inline"><font color="red">*</font> </span>
+				<span id="tmoney" style="color:red"></span>
 			</div>
 		</div>
 		<div class="control-group">

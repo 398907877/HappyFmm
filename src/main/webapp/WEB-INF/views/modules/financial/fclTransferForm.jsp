@@ -11,11 +11,17 @@
 			
 				$.ajax({ 
 					type: "post", 
-					url : "${ctx}/sys/user/infoData", 
+					url : "${ctx}/financial/fclTransfer/getUserInfo", 
 					dataType:'json',
 					data: {}, 
 					success: function(json){
 						user = json;
+						var jhf = json.jhf;
+						$("#tmoney").html("现有激活分"+jhf);
+						if(jhf == 0){
+							alert("现有激活分为零，不能转账！");
+							$("#transMoney").attr("readOnly",true);
+						}
 					}
 				}); 
 			
@@ -43,28 +49,40 @@
 		});
 		
 		function changeType(){
-			var transType = $("#transType").val();
+			var transType = $('#transType option:selected').val();
 			var transMoney = $("transMoney").val();
 			$("#transMoney").val("");
 			if(transType == "1"){
 				var jhf = user.jhf;
-				$("#tMoney").val(jhf);
-				if(parseInt(jhf)<parseInt(transMoney)){
-					alert("用户激活分不足，无法转账！")
-				}
+				$("#tmoney").html("现有激活分"+jhf);
 				$("#transMoney").removeClass("money");
 				$("#transMoney").addClass("transMoney");
 			}else {
 				var qzf = user.qzf;
-				if(parseInt(qzf) < parseInt(transMoney)){
-					alert("用户权证分不足，无法转账！");
-					$("#transMoney").attr("readonly",true);
-				}
+				$("#tmoney").html("现有权证分"+qzf);
 				$("#transMoney").removeClass("transMoney");
 				$("#transMoney").addClass("money");
 			}
 		}
-		
+		function checkMoney(){
+			var transType = $('#transType option:selected').val();
+			
+			var transMoney = $("#transMoney").val();
+			if(transType == "1"){
+				var jhf = user.jhf;
+				if(parseInt(jhf)<parseInt(transMoney)){
+					alert("用户激活分不足，无法转账！");
+					$("#transMoney").val("");
+				}
+			}else {
+				var qzf = user.qzf;
+				if(parseInt(qzf) < parseInt(transMoney)){
+					alert("用户权证分不足，无法转账！");
+					$("#transMoney").val("");
+				}
+			}
+			return false;
+		}
 		
 	</script>
 </head>
@@ -80,10 +98,11 @@
 		<div class="control-group">
 			<label class="control-label">转账类型：</label>
 			<div class="controls" style="width:230px">
-				<form:select path="transType" class="input-xlarge required" style="width:220px" onchange="changeType()" id="transType">
-					<form:option value="" label=""/>
-					<form:options items="${fns:getDictList('fcl_transfer')}" itemLabel="label" itemValue="value" htmlEscape="false" style="width:220px"/>
-				</form:select>
+				<select id="transType" name="transType" class="required input-medium" onchange="changeType()" style="width:220px" >
+					<c:forEach items="${fns:getDictList('fcl_transfer')}" var="dict">
+						<option value="${dict.value}">${dict.label}</option>
+					</c:forEach>
+				</select>
 				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
@@ -99,9 +118,9 @@
 		<div class="control-group">
 			<label class="control-label">转账金额：</label>
 			<div class="controls">
-				<form:input path="transMoney" htmlEscape="false" maxlength="64" class="input-xlarge required transMoney" style="width:206px" id="transMoney"/>
+				<form:input path="transMoney" htmlEscape="false" maxlength="64" class="input-xlarge required transMoney" style="width:206px" id="transMoney" onchange="checkMoney()"/>
 				<span class="help-inline"><font color="red">*</font> </span>
-				<span id="tMoney"></span>
+				<span id="tmoney" style="color:red"></span>
 			</div>
 		</div>
 		<div class="control-group">

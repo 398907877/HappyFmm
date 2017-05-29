@@ -87,4 +87,9 @@ public class FclTransferService extends CrudService<FclTransferDao, FclTransfer>
 		// TODO Auto-generated method stub
 		fclTransferDao.updateUserOutQz(fclJhTransfer);
 	}
+
+	public User getUserInfo(String userid) {
+		// TODO Auto-generated method stub
+		return fclTransferDao.getUserInfo(userid);
+	}
 }

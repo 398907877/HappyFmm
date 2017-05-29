@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>股权买卖管理</title>
+	<title>欢乐豆提现管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -18,13 +18,17 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctx}/equity/equitySell/list">股票卖列表</a></li>
-		<shiro:hasPermission name="equity:equitySell:edit"><li><a href="${ctx}/equity/equitySell/form">股票卖添加</a></li></shiro:hasPermission>
+		
+		<shiro:hasPermission name="equity:equityGency:edit"><li><a href="${ctx}/equity/equityGency/form">应急快售</a></li></shiro:hasPermission>
+		<li class="active"><a href="${ctx}/equity/equityGency/">应急快售记录</a></li>
 	</ul>
-	<form:form id="searchForm" modelAttribute="equityTrading" action="${ctx}/equity/equitySell/list" method="post" class="breadcrumb form-search">
+	<form:form id="searchForm" modelAttribute="equityGency" action="${ctx}/equity/equityGency/" method="post" class="breadcrumb form-search">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
+			<li><label>提现登录名：</label>
+				<form:input path="loginName" htmlEscape="false" maxlength="200" class="input-medium"/>
+			</li>
 			<li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
 			<li class="clearfix"></li>
 		</ul>
@@ -33,26 +37,24 @@
 	<table id="contentTable" class="table table-striped table-bordered table-condensed">
 		<thead>
 			<tr>
-				<th>用户</th>
-				<th>交易数量</th>
-				<th>交易金额</th>
+				<th>提现登录名</th>
+				<th>提现姓名</th>
+				<th>提现欢乐豆</th>
+				<th>提现金额</th>
 				<th>创建时间</th>
-				<th>操作</th>
 			</tr>
+			
 		</thead>
 		<tbody>
-		<c:forEach items="${page.list}" var="equitySell">
+		<c:forEach items="${page.list}" var="equityGency">
 			<tr>
-				<td>${equitySell.user.loginName}</td>
-				<td>${equitySell.tradingNum}</td>
-				<td>${equitySell.tradingMoney}</td>
+				<td>${equityGency.user.loginName}</td>
+				<td>${equityGency.user.name}</td>
+				<td>${equityGency.happyfood}</td>
+				<td>${equityGency.money}</td>
 				<td>
-					<fmt:formatDate value="${equitySell.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+					<fmt:formatDate value="${equityGency.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
 				</td>
-				<shiro:hasPermission name="equity:equitySell:edit"><td>
-					<a href="${ctx}/equity/equityBuy/buySave?equitySellId=${equitySell.id}">购买</a>
-					<a href="${ctx}/equity/equitySell/repealSell?id=${equitySell.id}" onclick="return confirmx('确认要撤销该股票吗？', this.href)">撤销</a>
-				</td></shiro:hasPermission> 
 			</tr>
 		</c:forEach>
 		</tbody>

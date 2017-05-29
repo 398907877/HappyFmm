@@ -26,6 +26,12 @@
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
 		<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 		<ul class="ul-form">
+			<li><label>转出姓名：</label>
+				<form:input path="loginName" htmlEscape="false" maxlength="200" class="input-medium"/>
+			</li>
+			<li><label>转入姓名：</label>
+				<form:input path="username" htmlEscape="false" maxlength="200" class="input-medium"/>
+			</li>
 			<li><label>转账类型：</label>
 				<form:select path="transType" class="input-medium">
 					<form:option value="" label=""/>
@@ -41,8 +47,10 @@
 		<thead>
 			<tr>
 				<th>转账类型</th>
-				<th>转出编号</th>
-				<th>转入编号</th>
+				<th>转出登录名</th>
+				<th>转出姓名</th>
+				<th>转入登陆名</th>
+				<th>转入姓名</th>
 				<th>转账金额</th>
 				<th>创建时间</th>
 			</tr>
@@ -54,7 +62,9 @@
 					${fns:getDictLabel(fclTransfer.transType, 'fcl_transfer', '')}
 				</td>
 				<td>${fclTransfer.user.loginName}</td>
+				<td>${fclTransfer.user.name}</td>
 				<td>${fclTransfer.username}</td>
+				<td>${fclTransfer.uname}</td>
 				<td>${fclTransfer.transMoney}</td>
 				<td>
 					<fmt:formatDate value="${fclTransfer.createDate}" pattern="yyyy-MM-dd HH:mm:ss"/>

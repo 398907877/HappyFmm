@@ -13,9 +13,16 @@
 				dataType:'json',
 				data: {}, 
 				success: function(json){
-					$("#buyMoney").val(json[0].tradingMoney);
-					$("#equitySellId").val(json[0].tradingId);
-					$("#tdNum").val(json[0].buyNum);
+					if(json != null){
+						$("#buyMoney").val(json.tradingMoney);
+						$("#equitySellId").val(json.id);
+						$("#tdNum").val(parseInt(json.tradingNum)-parseInt(json.buyNum));
+						$("#bNum").html("可购买数量："+(parseInt(json.tradingNum)-parseInt(json.buyNum)));
+					}else {
+						alert("暂无股票可以购买！");
+						$("#buyNum").attr("readOnly",true);
+					}
+					
 				}
 			}); 
 			$("#inputForm").validate({
@@ -39,11 +46,10 @@
 		function changeNum(){
 			var tdNum = $("#tdNum").val();
 			var buyNum = $("#buyNum").val();
-			var s = "";
 			if(parseInt(tdNum) < parseInt(buyNum)){
-				s += "<label  class='error'>最多输入"+tdNum+"</label>";
-				$("#buyNum").val(tdNum);
-				$("#error").html(s);
+				alert("购买数量超过"+tdNum+",请重新填写");
+				$("#buyNum").val("");
+				return false;
 			}
 		}
 
@@ -63,21 +69,22 @@
 		<div class="control-group">
 			<label class="control-label">购买数量：</label>
 			<div class="controls">
-				<form:input path="buyNum" htmlEscape="false" maxlength="100" class="required " onchange="changeNum()"/>
+				<form:input path="buyNum" htmlEscape="false" maxlength="100" class="input-xlarge required " onchange="changeNum()" id="buyNum"/>
 				<span class="help-inline"><font color="red">*</font> </span>
-				<span id="error"></span>
+				<span id="bNum" style="color:red"></span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">购买金额：</label>
 			<div class="controls">
-				<form:input path="buyMoney" htmlEscape="false" maxlength="100" class="input-xlarge required" id="buyMoney" readOnly="true" style="width:206px"/>
+				<form:input path="buyMoney" htmlEscape="false" maxlength="100" class="input-xlarge required" id="buyMoney" readOnly="true" />
+				<span class="help-inline"><font color="red">*</font> </span>
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label">备注信息：</label>
 			<div class="controls">
-				<form:textarea path="remarks" htmlEscape="false" rows="4" maxlength="255" class="input-xxlarge "/>
+				<form:textarea path="remarks" htmlEscape="false" rows="4" maxlength="255" class="input-xxlarge " style="width:270px"/>
 			</div>
 		</div>
 		<div class="form-actions">

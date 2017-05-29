@@ -14,6 +14,7 @@ import com.thinkgem.jeesite.common.service.CrudService;
 import com.thinkgem.jeesite.modules.financial.entity.FclWithdraw;
 import com.thinkgem.jeesite.modules.financial.dao.FclTransferDao;
 import com.thinkgem.jeesite.modules.financial.dao.FclWithdrawDao;
+import com.thinkgem.jeesite.modules.sys.entity.User;
 
 /**
  * 挖矿分提现Service
@@ -57,6 +58,11 @@ public class FclWithdrawService extends CrudService<FclWithdrawDao, FclWithdraw>
 	public void updateUserWkf(FclWithdraw fclWithdraw) {
 		// TODO Auto-generated method stub
 		fclWithdrawDao.updateUserWkf(fclWithdraw);
+	}
+
+	public User getUserInfo(String userid) {
+		// TODO Auto-generated method stub
+		return fclWithdrawDao.getUserInfo(userid);
 	}
 	
 }

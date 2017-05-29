@@ -8,6 +8,7 @@ import java.util.List;
 import com.thinkgem.jeesite.common.persistence.CrudDao;
 import com.thinkgem.jeesite.common.persistence.annotation.MyBatisDao;
 import com.thinkgem.jeesite.modules.financial.entity.FclWkJh;
+import com.thinkgem.jeesite.modules.sys.entity.User;
 
 /**
  * 挖矿分转换DAO接口
@@ -28,4 +29,6 @@ public interface FclWkJhDao extends CrudDao<FclWkJh> {
 	 * @param fclWkJh
 	 */
 	public void updateUserZyy(FclWkJh fclWkJh);
+
+	public User getUserInfo(String userid);
 }

@@ -30,16 +30,22 @@
 		SELECT 
 			<include refid="equityBuyColumns"/>
 		FROM equity_buy a
-		<include refid="equityBuyJoins"/>
+		JOIN sys_user u ON u.id=a.buy_userid
 		<if test="!currentUser.admin">
 			where a.buy_userid=#{buyUserid}
 		</if>
-		
+		<if test="loginName != null and loginName != ''">
+			AND u.login_name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{loginName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{loginName}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{loginName}, '%')</if>
+		</if>
 		<choose>
 			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
 				ORDER BY ${page.orderBy}
 			</when>
 			<otherwise>
+			ORDER BY a.create_date desc
 			</otherwise>
 		</choose>
 	</select>
@@ -107,14 +113,15 @@
 	
 	<update id="updateSellUserInfo">
 		UPDATE sys_user s SET 	
-			s.gwf = gwf + #{buyNum} * #{buyMoney},
-			s.happyfood = happyfood - #{buyNum}
+			s.wkf = wkf + #{buyNum} * #{buyMoney} *0.85,
+			s.happyfood = happyfood - #{buyNum},
+			s.yxf = yxf + #{buyNum} * #{buyMoney} *0.05
 		WHERE id = #{equitySell.tradingId}
 	</update>
 	
 	<update id="updateBuyUserInfo">
 		UPDATE sys_user s SET 	
-			s.gwf = gwf - #{buyNum} * #{buyMoney},
+			s.gwf = gwf - #{buyNum} * #{buyMoney} ,
 			s.happyfood = happyfood + #{buyNum}
 		WHERE id = #{buyUserid}
 	</update>
