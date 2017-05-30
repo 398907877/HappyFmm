@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/views/include/taglib.jsp"%>
 <html>
 <head>
-	<title>积分转账管理</title>
+	<title>积分转账管理</title> 
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
 	var user = "";	
