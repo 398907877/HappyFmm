@@ -15,10 +15,11 @@
 					dataType:'json',
 					data: {}, 
 					success: function(json){
-						wkf = json.wkf;
+						wkf = Math.round(json.wkf*100)/100;
 						$("#tmoney").html("现有挖矿分"+ wkf);
 						if(wkf == 0){
-							alert("现有挖矿分为零，不能提现！");
+							$("#messageBox").css("display","block");
+							$("#messageBox").text("现有挖矿分为零，不能提现！");
 							$("#money").attr("readOnly",true);
 						}
 					}
@@ -44,7 +45,8 @@
 		function checkMoney(){
 			var money = $("#money").val();
 			if(parseInt(money)>parseInt(wkf)){
-				alert("提现金额超过现有挖矿分，请重新填写！");
+				$("#messageBox").css("display","block");
+				$("#messageBox").text("提现金额超过现有挖矿分，请重新填写！");
 				$("#money").val("");
 				return false;
 			}
@@ -59,7 +61,8 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="fclWithdraw" action="${ctx}/financial/fclWithdraw/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
+		<sys:message content="${message}"/>
+		<div id="messageBox" class="alert alert-success hide" style="display: none;"><button data-dismiss="alert" class="close">×</button></div>		
 		<div class="control-group">
 			<label class="control-label">提现金额：</label>
 			<div class="controls">

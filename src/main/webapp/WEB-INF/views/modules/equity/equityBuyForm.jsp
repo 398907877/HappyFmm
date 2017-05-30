@@ -18,16 +18,19 @@
 						u = json;
 						var gwf = u.user.gwf;
 						if(gwf == 0){
-							alert("当前购物分为零，无法购买");
+							$("#messageBox").css("display","block");
+							$("#messageBox").text("用户购物分为零，无法购买");
 							$("#buyNum").attr("readOnly",true);
 						}else {
+							$("#messageBox").css("display","none");
 							$("#buyMoney").val(json.tradingMoney);
 							$("#equitySellId").val(json.id);
 							$("#tdNum").val(parseInt(json.tradingNum)-parseInt(json.buyNum));
 							$("#bNum").html("可购买数量："+(parseInt(json.tradingNum)-parseInt(json.buyNum)));
 						}
 					}else {
-						alert("暂无股票可以购买！");
+						$("#messageBox").css("display","block");
+						$("#messageBox").text("用户购物分为零，无法购买");
 						$("#buyNum").attr("readOnly",true);
 					}
 					
@@ -54,9 +57,10 @@
 		function changeNum(){
 			var tdNum = $("#tdNum").val();
 			var buyNum = $("#buyNum").val();
-			var   r   =   /^[1-9]*[0-9][1-9]*$/;
+			var   r   =   /^[1-9]*[0-9][0-9]*$/;
 			if(!r.test(buyNum)){
-				alert("请输入一个正整数");
+				$("#messageBox").css("display","block");
+				$("#messageBox").text("请输入一个正整数");
 				$("#buyNum").val("");
 				return false;
 			}
@@ -65,12 +69,14 @@
 			var gwf = u.user.gwf;
 			var gnum = parseInt(parseFloat(gwf)/parseFloat(money));
 			if(parseFloat(buyNum)*parseFloat(money) > parseFloat(gwf)){
-				alert("当前购物分为"+parseFloat(gwf)+",只能购买"+gnum);
+				$("#messageBox").css("display","block");
+				$("#messageBox").text("当前购物分为"+parseFloat(gwf)+",只能购买"+gnum);
 				$("#buyNum").val("");
 				return false;
 			}
 			if(parseInt(tdNum) < parseInt(buyNum)){
-				alert("购买数量超过"+tdNum+",请重新填写");
+				$("#messageBox").css("display","block");
+				$("#messageBox").text("购买数量超过"+tdNum+",请重新填写");
 				$("#buyNum").val("");
 				return false;
 			}
@@ -88,6 +94,7 @@
 	<input name="tdNum" id="tdNum" value="" type="hidden">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
+		<div id="messageBox" class="alert alert-success hide" style="display: none;"><button data-dismiss="alert" class="close">×</button></div>
 		<form:input path="equitySellId" htmlEscape="false" maxlength="100" class="input-xlarge" id="equitySellId" type="hidden"/>
 		<div class="control-group">
 			<label class="control-label">购买数量：</label>

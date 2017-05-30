@@ -45,7 +45,8 @@
 			var happyfood = $("#happyfood").val();
 			var happyNum = user.happyfood;
 			if(parseInt(happyfood) > parseInt(happyNum)){
-				alert("提现数量大于现有欢乐豆数量，请重新填写");
+				$("#messageBox").css("display","block");
+				$("#messageBox").text("提现数量大于现有欢乐豆数量，请重新填写");
 				$("#happyfood").val("");
 				return false;
 			}
@@ -60,7 +61,8 @@
 	</ul><br/>
 	<form:form id="inputForm" modelAttribute="equityGency" action="${ctx}/equity/equityGency/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
-		<sys:message content="${message}"/>		
+		<sys:message content="${message}"/>	
+		<div id="messageBox" class="alert alert-success hide" style="display: none;"><button data-dismiss="alert" class="close">×</button></div>	
 		<div class="control-group">
 			<label class="control-label">欢乐豆数量：</label>
 			<div class="controls">

@@ -16,10 +16,11 @@
 					data: {}, 
 					success: function(json){
 						user = json;
-						var jhf = json.jhf;
+						var jhf = Math.round(json.jhf*100)/100;
 						$("#tmoney").html("现有激活分"+jhf);
 						if(jhf == 0){
-							alert("现有激活分为零，不能转账！");
+							$("#messageBox").css("display","block");
+							$("#messageBox").text("现有激活分为零，不能转账！");
 							$("#transMoney").attr("readOnly",true);
 						}
 					}
@@ -71,13 +72,15 @@
 			if(transType == "1"){
 				var jhf = user.jhf;
 				if(parseInt(jhf)<parseInt(transMoney)){
-					alert("用户激活分不足，无法转账！");
+					$("#messageBox").css("display","block");
+					$("#messageBox").text("用户激活分不足，无法转账！");
 					$("#transMoney").val("");
 				}
 			}else {
 				var qzf = user.qzf;
 				if(parseInt(qzf) < parseInt(transMoney)){
-					alert("用户权证分不足，无法转账！");
+					$("#messageBox").css("display","block");
+					$("#messageBox").text("用户权证分不足，无法转账！");
 					$("#transMoney").val("");
 				}
 			}
@@ -95,6 +98,7 @@
 	<form:form id="inputForm" modelAttribute="fclTransfer" action="${ctx}/financial/fclTransfer/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
+		<div id="messageBox" class="alert alert-success hide" style="display: none;"><button data-dismiss="alert" class="close">×</button></div>
 		<div class="control-group">
 			<label class="control-label">转账类型：</label>
 			<div class="controls" style="width:230px">

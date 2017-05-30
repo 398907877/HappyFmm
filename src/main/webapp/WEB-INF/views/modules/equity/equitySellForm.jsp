@@ -16,6 +16,14 @@
 					success: function(json){
 						user = json;
 						var happyfood = json.happyfood;
+						if(happyfood == 0){
+							$("#messageBox").css("display","block");
+							$("#messageBox").text("用户股票为零，无法卖出");
+							$("#tradingNum").attr("readOnly",true);
+						}
+						else {
+							$("#messageBox").css("display","none");
+						}
 						$("#happyfood").html("现有股票"+happyfood);
 					}
 				}); 
@@ -40,16 +48,18 @@
 		function checkTradingNum(){
 			var tradingNum = $("#tradingNum").val();
 			
-			var   r   =   /^[1-9]*[1-9][0-9]*$/;
+			var   r   =   /^[1-9]*[0-9][0-9]*$/;
 			if(!r.test(tradingNum)){
-				alert("请输入一个正整数");
+				$("#messageBox").css("display","block");
+				$("#messageBox").text("请输入一个正整数");
 				$("#tradingNum").val("");
 				return false;
 			}
 			
 			var happyfood = user.happyfood;
 			if(parseInt(tradingNum) > parseInt(happyfood)){
-				alert("卖出数量超过现有数量，请重新填写");
+				$("#messageBox").css("display","block");
+				$("#messageBox").text("卖出数量超过现有数量，请重新填写");
 				$("#tradingNum").val("");
 				return false;
 			}
@@ -65,6 +75,7 @@
 	<form:form id="inputForm" modelAttribute="equitySell" action="${ctx}/equity/equitySell/save" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<sys:message content="${message}"/>		
+		<div id="messageBox" class="alert alert-success hide" style="display: none;"><button data-dismiss="alert" class="close">×</button></div>
 		<div class="control-group">
 			<label class="control-label">交易数量：</label>
 			<div class="controls">

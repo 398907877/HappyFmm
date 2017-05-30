@@ -33,6 +33,7 @@ import com.thinkgem.jeesite.modules.equity.entity.EquitySell;
 import com.thinkgem.jeesite.modules.equity.service.EquityBuyService;
 import com.thinkgem.jeesite.modules.equity.service.EquitySellService;
 import com.thinkgem.jeesite.modules.etd.entity.EquityTrading;
+import com.thinkgem.jeesite.modules.financial.service.FclWkJhService;
 import com.thinkgem.jeesite.modules.sys.entity.User;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 
@@ -49,6 +50,8 @@ public class EquityBuyController extends BaseController {
 	private EquityBuyService equityBuyService;
 	@Autowired
 	private EquitySellService equitySellService;
+	@Autowired
+	private FclWkJhService fclWkJhService;
 	
 	@ModelAttribute
 	public EquityBuy get(@RequestParam(required=false) String id) {
@@ -88,16 +91,23 @@ public class EquityBuyController extends BaseController {
 		}
 		User user = UserUtils.getUser();
 		equityBuy.setBuyUserid(user.getId());
-		equityBuyService.save(equityBuy);
-		equityBuyService.updateSell(equityBuy);
-		EquitySell equitySell = new EquitySell();
-		equitySell.setId(equityBuy.getEquitySellId());
-		EquitySell sell = equitySellService.getEquitySellId(equitySell);
-		equityBuy.setEquitySell(sell);
-		equityBuyService.updateSellUserInfo(equityBuy);
-		equityBuyService.updateBuyUserInfo(equityBuy);
 		
-		addMessage(redirectAttributes, "保存股票买成功");
+		User u = fclWkJhService.getUserInfo(user.getId());
+		if(u.getGwf().equals("0")){
+			addMessage(redirectAttributes, "用户购物分为零，无法购买");
+			return "redirect:"+Global.getAdminPath()+"/equity/equityBuy/form";
+		}else {
+			equityBuyService.save(equityBuy);
+			equityBuyService.updateSell(equityBuy);
+			EquitySell equitySell = new EquitySell();
+			equitySell.setId(equityBuy.getEquitySellId());
+			EquitySell sell = equitySellService.getEquitySellId(equitySell);
+			equityBuy.setEquitySell(sell);
+			equityBuyService.updateSellUserInfo(equityBuy);
+			equityBuyService.updateBuyUserInfo(equityBuy);
+			
+			addMessage(redirectAttributes, "保存股票买成功");
+		}
 		return "redirect:"+Global.getAdminPath()+"/equity/equityBuy/?repage";
 	}
 	
@@ -108,30 +118,5 @@ public class EquityBuyController extends BaseController {
 		addMessage(redirectAttributes, "删除股票买成功");
 		return "redirect:"+Global.getAdminPath()+"/equity/equityBuy/?repage";
 	}
-
 	
-	@RequiresPermissions("equity:equityBuy:view")
-	@RequestMapping(value = "buySave")
-	public String buySave(EquityBuy equityBuy, Model model,RedirectAttributes redirectAttributes) {
-		EquitySell equitySell = new EquitySell();
-		equitySell.setId(equityBuy.getEquitySellId());
-		EquitySell sell = equitySellService.getEquitySellId(equitySell);
-		equityBuy.setBuyMoney(sell.getTradingMoney());
-		equityBuy.setBuyNum(sell.getTradingNum());
-		
-		
-		User user = UserUtils.getUser();
-		equityBuy.setBuyUserid(user.getId());
-		equityBuy.setEquitySellId(equitySell.getId());
-		equityBuy.preInsert();
-		equityBuyService.buySave(equityBuy);
-		equityBuyService.updateSell(equityBuy);
-		
-		equityBuy.setEquitySell(sell);
-		equityBuyService.updateSellUserInfo(equityBuy);
-		equityBuyService.updateBuyUserInfo(equityBuy);
-		
-		addMessage(redirectAttributes, "保存股票买成功");
-		return "modules/equity/equityGencyList";
-	}
 }

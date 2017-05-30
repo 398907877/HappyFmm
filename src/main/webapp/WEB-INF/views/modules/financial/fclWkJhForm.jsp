@@ -15,10 +15,11 @@
 				dataType:'json',
 				data: {}, 
 				success: function(json){
-					wkf = json.wkf;
+					wkf = Math.round(json.wkf*100)/100;
 					$("#tmoney").html("现有挖矿分"+wkf);
 					if(wkf == 0){
-						alert("现有挖矿分为零，不能转换！");
+						$("#messageBox").css("display","block");
+						$("#messageBox").text("现有挖矿分为零，不能转换！");
 						$("#money").attr("readOnly",true);
 					}
 				}
@@ -44,7 +45,8 @@
 		function checkMoney(){
 			var money = $("#money").val();
 			if(parseInt(money)> parseInt(wkf)){
-				alert("转换金额超过现有挖矿分，请重新填写！");
+				$("#messageBox").css("display","block");
+				$("#messageBox").text("转换金额超过现有挖矿分，请重新填写！");
 				$("#money").val("");
 				return false;
 			}
@@ -61,6 +63,7 @@
 		<form:hidden path="email" htmlEscape="false" maxlength="255" class="input-xlarge"/>
 		<sys:ckfinder input="email" type="files" uploadPath="/mytask" selectMultiple="false"/> --%>
 		<sys:message content="${message}"/>
+		<div id="messageBox" class="alert alert-success hide" style="display: none;"><button data-dismiss="alert" class="close">×</button></div>
 		<div class="control-group">
 			<label class="control-label">转换类型：</label>
 			<div class="controls" style="width:220px">

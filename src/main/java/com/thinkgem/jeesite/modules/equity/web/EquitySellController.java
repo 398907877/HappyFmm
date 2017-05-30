@@ -32,6 +32,7 @@ import com.thinkgem.jeesite.modules.equity.entity.EquityBuy;
 import com.thinkgem.jeesite.modules.equity.entity.EquitySell;
 import com.thinkgem.jeesite.modules.equity.service.EquitySellService;
 import com.thinkgem.jeesite.modules.etd.entity.EquityTrading;
+import com.thinkgem.jeesite.modules.financial.service.FclWkJhService;
 import com.thinkgem.jeesite.modules.sys.entity.User;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
 
@@ -46,6 +47,8 @@ public class EquitySellController extends BaseController {
 
 	@Autowired
 	private EquitySellService equitySellService;
+	@Autowired
+	private FclWkJhService fclWkJhService;
 	
 	@ModelAttribute
 	public EquitySell get(@RequestParam(required=false) String id) {
@@ -101,7 +104,12 @@ public class EquitySellController extends BaseController {
 	@ResponseBody
 	@RequiresPermissions("equity:equitySell:view")
 	@RequestMapping(value = "getMoney")
-	public EquitySell getMoney(EquitySell equitySell) {
+	public EquitySell getMoney(EquitySell equitySell, RedirectAttributes redirectAttributes) {
+		User user = UserUtils.getUser();
+		User u = fclWkJhService.getUserInfo(user.getId());
+		if(u.getGwf().equals("0")){
+			addMessage(redirectAttributes, "用户购物分为零，无法购买");
+		}
 		
 		EquitySell es = equitySellService.getMoney(equitySell);
 		
