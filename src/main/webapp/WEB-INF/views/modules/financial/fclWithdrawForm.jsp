@@ -43,7 +43,7 @@
 		
 		function checkMoney(){
 			var money = $("#money").val();
-			if(money>wkf){
+			if(parseInt(money)>parseInt(wkf)){
 				alert("提现金额超过现有挖矿分，请重新填写！");
 				$("#money").val("");
 				return false;

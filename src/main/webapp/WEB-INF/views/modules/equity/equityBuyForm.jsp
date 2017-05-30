@@ -5,6 +5,7 @@
 	<title>股权买卖管理</title>
 	<meta name="decorator" content="default"/>
 	<script type="text/javascript">
+		var u = "";
 		$(document).ready(function() {
 			//$("#name").focus();
 			$.ajax({ 
@@ -14,10 +15,17 @@
 				data: {}, 
 				success: function(json){
 					if(json != null){
-						$("#buyMoney").val(json.tradingMoney);
-						$("#equitySellId").val(json.id);
-						$("#tdNum").val(parseInt(json.tradingNum)-parseInt(json.buyNum));
-						$("#bNum").html("可购买数量："+(parseInt(json.tradingNum)-parseInt(json.buyNum)));
+						u = json;
+						var gwf = u.user.gwf;
+						if(gwf == 0){
+							alert("当前购物分为零，无法购买");
+							$("#buyNum").attr("readOnly",true);
+						}else {
+							$("#buyMoney").val(json.tradingMoney);
+							$("#equitySellId").val(json.id);
+							$("#tdNum").val(parseInt(json.tradingNum)-parseInt(json.buyNum));
+							$("#bNum").html("可购买数量："+(parseInt(json.tradingNum)-parseInt(json.buyNum)));
+						}
 					}else {
 						alert("暂无股票可以购买！");
 						$("#buyNum").attr("readOnly",true);
@@ -46,6 +54,21 @@
 		function changeNum(){
 			var tdNum = $("#tdNum").val();
 			var buyNum = $("#buyNum").val();
+			var   r   =   /^[1-9]*[0-9][1-9]*$/;
+			if(!r.test(buyNum)){
+				alert("请输入一个正整数");
+				$("#buyNum").val("");
+				return false;
+			}
+			
+			var money = u.tradingMoney;
+			var gwf = u.user.gwf;
+			var gnum = parseInt(parseFloat(gwf)/parseFloat(money));
+			if(parseFloat(buyNum)*parseFloat(money) > parseFloat(gwf)){
+				alert("当前购物分为"+parseFloat(gwf)+",只能购买"+gnum);
+				$("#buyNum").val("");
+				return false;
+			}
 			if(parseInt(tdNum) < parseInt(buyNum)){
 				alert("购买数量超过"+tdNum+",请重新填写");
 				$("#buyNum").val("");

@@ -39,6 +39,14 @@
 		
 		function checkTradingNum(){
 			var tradingNum = $("#tradingNum").val();
+			
+			var   r   =   /^[1-9]*[1-9][0-9]*$/;
+			if(!r.test(tradingNum)){
+				alert("请输入一个正整数");
+				$("#tradingNum").val("");
+				return false;
+			}
+			
 			var happyfood = user.happyfood;
 			if(parseInt(tradingNum) > parseInt(happyfood)){
 				alert("卖出数量超过现有数量，请重新填写");

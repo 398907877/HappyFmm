@@ -13,7 +13,8 @@
 		a.remarks AS "remarks",
 		a.trading_money*a.buy_num AS "totalMoney",
 		s.login_name AS "user.loginName",
-		s.name AS "user.name"
+		s.name AS "user.name",
+		s.gwf AS "user.gwf"
 	</sql>
 	
 	<sql id="equitySellJoins">
@@ -81,8 +82,9 @@
 		SELECT 
 			<include refid="equitySellColumns"/>
 		FROM equity_sell a
-		<include refid="equitySellJoins"/>
+		LEFT JOIN sys_user s ON a.trading_id=s.id
 		WHERE a.trading_num != a.buy_num and a.repeal_flag='0'
+		order by a.trading_money,a.create_date limit 1
 	</select>
 	<select id="getSellList" resultType="EquitySell">
 		SELECT 

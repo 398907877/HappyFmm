@@ -47,9 +47,16 @@ public class User extends DataEntity<User> {
 	private String linkperson;//接点人
 	private String linkPersons;//所有上级接点人
 	private String rePerson;//推荐人
-	private String gwf;//购物分
-	private String yxf;
-	private String wkf;
+	private String wkf;			// 挖矿分=奖金分
+	private String jhf;			// 激活分
+	private String qzf;			// 权证分
+	private String zyy;			// 滋养液
+	private String gwf;			// 购物分
+	private String yxf;			// 游戏分
+	private String happyfood;	// 实际开心果
+	private String happyfoodsum;// 开心果总量
+	
+
 	@Length(min=0, max=100)
 	public String getYxf() {
 		return yxf;
@@ -417,4 +424,46 @@ public class User extends DataEntity<User> {
 	public void setLevel(String level) {
 		this.level = level;
 	}
+
+	public String getJhf() {
+		return jhf;
+	}
+
+	public void setJhf(String jhf) {
+		this.jhf = jhf;
+	}
+
+	public String getQzf() {
+		return qzf;
+	}
+
+	public void setQzf(String qzf) {
+		this.qzf = qzf;
+	}
+
+	public String getZyy() {
+		return zyy;
+	}
+
+	public void setZyy(String zyy) {
+		this.zyy = zyy;
+	}
+
+	public String getHappyfood() {
+		return happyfood;
+	}
+
+	public void setHappyfood(String happyfood) {
+		this.happyfood = happyfood;
+	}
+
+	public String getHappyfoodsum() {
+		return happyfoodsum;
+	}
+
+	public void setHappyfoodsum(String happyfoodsum) {
+		this.happyfoodsum = happyfoodsum;
+	}
+
+	
 }
