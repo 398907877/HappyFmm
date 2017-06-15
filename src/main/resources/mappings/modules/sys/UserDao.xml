@@ -88,11 +88,15 @@
 		a.re_person,
 		a.re_level,
 		a.re_persons,
-		a.gwf,
-		a.yxf,
+
 		a.wkf,
 		a.jhf,
+		a.zyy,
 		a.qzf,
+		a.gwf,
+		a.yxf,
+		a.happyfood,
+
     	c.name AS "company.name",
     	c.parent_id AS "company.parent.id",
     	c.parent_ids AS "company.parentIds",
