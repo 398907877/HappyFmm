@@ -4,6 +4,7 @@
 package com.thinkgem.jeesite.modules.sys.web;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
@@ -89,6 +90,23 @@ public class UserController extends BaseController {
 		return "modules/sys/rewardList";
 	}
 
+	@RequestMapping(value = "lpList")
+	public String lpList(Lp lp, HttpServletRequest request, HttpServletResponse response, Model model) {
+		lp.setUser(UserUtils.getUser());
+		Page<Lp> page = systemService.findLpList(new Page<Lp>(request, response), lp);
+		model.addAttribute("page", page);
+		return "modules/sys/lpList";
+	}
+
+	@ResponseBody
+	@RequiresPermissions("sys:user:view")
+	@RequestMapping(value = {"lpListData"})
+	public Page<Lp> lpListData(Lp lp, HttpServletRequest request, HttpServletResponse response, Model model) {
+		lp.setUser(UserUtils.getUser());
+		Page<Lp> page = systemService.findLpList(new Page<Lp>(request, response), lp);
+		return page;
+	}
+
 	@ResponseBody
 	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = {"rewardListData"})
@@ -137,6 +155,7 @@ public class UserController extends BaseController {
 				user.setReLevel(level.toString());
 			}
 		}
+		user.setLinkSide(request.getParameter("linkSide"));
 		model.addAttribute("user", user);
 		model.addAttribute("allRoles", systemService.findAllRole());
 		return "modules/sys/userRegistForm";
@@ -200,9 +219,7 @@ public class UserController extends BaseController {
 		if (!beanValidator(model, user)){
 			return registForm(user, request, model);
 		}
-		if (UserUtils.getUser().isAdmin()){//判断 激活分权证分
 
-		}
 		if (!"true".equals(checkLoginName(user.getOldLoginName(), user.getLoginName()))){
 			addMessage(model, "保存用户'" + user.getLoginName() + "'失败，登录名已存在");
 			return registForm(user, request,model);
@@ -221,7 +238,21 @@ public class UserController extends BaseController {
 			user.setGwf(new BigDecimal(user.getLevel())
 					.multiply(new BigDecimal("0.48" )).toString());
 			List<Dict> levels = DictUtils.getDictList("USER_LEVEL");
-
+		}
+		if (!UserUtils.getUser().isAdmin()){//判断 激活分权证分
+			BigDecimal jhf = new BigDecimal(user.getLevel()).multiply(new BigDecimal("0.9"));
+			BigDecimal qzf = new BigDecimal(user.getLevel()).multiply(new BigDecimal("0.1"));
+			BigDecimal curJhf = new BigDecimal(UserUtils.getUser().getJhf());
+			BigDecimal curQzf = new BigDecimal(UserUtils.getUser().getQzf());
+			if(curJhf.compareTo(jhf)<0){
+				addMessage(redirectAttributes, "您的激活分不足，不允许操作！");
+			}
+			if(curQzf.compareTo(qzf)<0){
+				addMessage(redirectAttributes, "您的权证分不足，不允许操作！");
+			}
+			UserUtils.getUser().setJhf(curJhf.subtract(jhf).toString());
+			UserUtils.getUser().setQzf(curQzf.subtract(qzf).toString());
+			systemService.saveUser(UserUtils.getUser());
 		}
 		systemService.saveRegistUser(user);
 		// 清除当前用户缓存
@@ -430,7 +461,9 @@ public class UserController extends BaseController {
 
 	//@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "userTreeView")
-	public String userTreeView(String type, Model model) {
+	public String userTreeView(String type,String userId,String fromUserId, Model model) {
+		model.addAttribute("userId",userId);
+		model.addAttribute("fromUserId",fromUserId);
 		model.addAttribute("type", type);
 		return "modules/sys/userTree";
 	}
@@ -455,8 +488,9 @@ public class UserController extends BaseController {
 	//@RequiresPermissions("user") 用户接点树数据
 	@ResponseBody
 	@RequestMapping(value = "linkUserTree")
-	public UserTreeNode linkUserTree(HttpServletResponse response) {
-		return systemService.getUserTreeData();
+	public UserTreeNode linkUserTree(@RequestParam(required=false) String userId,
+									 @RequestParam(required=false) String fromUserId,HttpServletResponse response) {
+		return systemService.getUserTreeData(userId,fromUserId);
 	}
 
 	/**
@@ -466,8 +500,8 @@ public class UserController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "reUserTree")
-	public UserTreeNode reUserTree(HttpServletResponse response) {
-		return systemService.getUserReTreeData();
+	public UserTreeNode reUserTree(@RequestParam(required=false) String userId,HttpServletResponse response) {
+		return systemService.getUserReTreeData(userId);
 	}
 //	@InitBinder
 //	public void initBinder(WebDataBinder b) {

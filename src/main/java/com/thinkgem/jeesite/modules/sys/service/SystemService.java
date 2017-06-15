@@ -6,7 +6,8 @@ package com.thinkgem.jeesite.modules.sys.service;
 import java.math.BigDecimal;
 import java.util.*;
 
-import com.thinkgem.jeesite.modules.sys.dao.RewardDetailDao;
+import com.sun.jdi.IntegerValue;
+import com.thinkgem.jeesite.modules.sys.dao.*;
 import com.thinkgem.jeesite.modules.sys.entity.*;
 import com.thinkgem.jeesite.modules.sys.utils.DictUtils;
 import org.activiti.engine.IdentityService;
@@ -27,9 +28,6 @@ import com.thinkgem.jeesite.common.utils.CacheUtils;
 import com.thinkgem.jeesite.common.utils.Encodes;
 import com.thinkgem.jeesite.common.utils.StringUtils;
 import com.thinkgem.jeesite.common.web.Servlets;
-import com.thinkgem.jeesite.modules.sys.dao.MenuDao;
-import com.thinkgem.jeesite.modules.sys.dao.RoleDao;
-import com.thinkgem.jeesite.modules.sys.dao.UserDao;
 import com.thinkgem.jeesite.modules.sys.security.SystemAuthorizingRealm;
 import com.thinkgem.jeesite.modules.sys.utils.LogUtils;
 import com.thinkgem.jeesite.modules.sys.utils.UserUtils;
@@ -49,6 +47,8 @@ public class SystemService extends BaseService implements InitializingBean {
 	
 	@Autowired
 	private UserDao userDao;
+	@Autowired
+	private LpDao lpDao;
 	@Autowired
 	private RewardDetailDao rewardDetailDao;
 	@Autowired
@@ -108,6 +108,20 @@ public class SystemService extends BaseService implements InitializingBean {
 		rewardDetail.setPage(page);
 		// 执行分页查询
 		page.setList(rewardDetailDao.findList(rewardDetail));
+		return page;
+	}
+
+	/**
+	 * 分页查询量碰表
+	 * @param page
+	 * @param lp
+	 * @return
+	 */
+	public Page<Lp> findLpList(Page<Lp> page, Lp lp) {
+		// 设置分页参数
+		lp.setPage(page);
+		// 执行分页查询
+		page.setList(lpDao.findList(lp));
 		return page;
 	}
 	/**
@@ -175,9 +189,12 @@ public class SystemService extends BaseService implements InitializingBean {
 		if (StringUtils.isBlank(user.getId())){
 			user.setGwf(new BigDecimal(user.getLevel())
 					.multiply(new BigDecimal("0.48" )).toString());
-
-			user.getRoleList().add(new Role("6"));
 			user.preInsert();
+			user.setJhf("0");
+			user.setQzf("0");
+			user.setGwf("0");
+			user.setYxf("0");
+			user.setWkf("0");
 			userDao.insert(user);
 			String reReward = "0.08";
 			String reLdReward = "0.05";
@@ -186,41 +203,8 @@ public class SystemService extends BaseService implements InitializingBean {
 			}
 			//推荐奖励
 			countReward(UserUtils.getUser(),reReward,user.getLevel(),"tj");
-
-			List<User> sblings = userDao.getByLinkperson(user);
-			if(sblings!=null && sblings.size() == 2){//处理领导
-				String[] linkpersons = user.getLinkPersons().split(",");
-				int pCount = 0;
-				User firstParent = userDao.getByLoginName(new User(null,
-						linkpersons[linkpersons.length-1]));
-				countReward(firstParent,reReward,user.getLevel(),"dp");//对碰奖励
-				for (int i = linkpersons.length-2; i > 0; i--) {
-					String linkperson = linkpersons[i];
-					User parent = userDao.getByLoginName(new User(null,linkperson));
-					if(pCount == 0){//领导奖励
-						countReward(parent,reLdReward,user.getLevel(),"ld");
-					}else if (pCount == 1){
-						if(Integer.valueOf(parent.getLevel())>=500){//相应级别才有奖励
-							countReward(parent,reLdReward,user.getLevel(),"ld");
-						}
-					}else if(pCount == 2){
-						if(Integer.valueOf(parent.getLevel())>=1000){
-							countReward(parent,reLdReward,user.getLevel(),"ld");
-						}
-					}else if(pCount == 3){
-						if(Integer.valueOf(parent.getLevel())>=2000){
-							countReward(parent,reLdReward,user.getLevel(),"ld");
-						}
-					}else if(pCount == 4){
-						if(Integer.valueOf(parent.getLevel())>=5000){
-							countReward(parent,reLdReward,user.getLevel(),"ld");
-						}
-					}else{
-						break;
-					}
-					pCount ++;
-				}
-			}
+			dealLp(user);//处理量碰表
+			countDp(user);
 		}else{
 			// 清除原用户机构用户缓存
 			User oldUser = userDao.get(user.getId());
@@ -249,6 +233,113 @@ public class SystemService extends BaseService implements InitializingBean {
 	}
 
 	/**
+	 * 计算对碰
+	 * @param user
+	 */
+	private void countDp(User user) {
+		String[] linkPersons = user.getLinkPersons().split(",");
+		for (int i = 2; i < linkPersons.length; i++) {
+            Lp lp = new Lp(UserUtils.getByLoginName(linkPersons[i]));
+            List<Lp> lpList = lpDao.findList(lp);
+            for (Lp l1 : lpList) {
+                Integer p = 0;
+                Integer lwp = Integer.valueOf(l1.getLtotal())-
+                        Integer.valueOf(l1.getLp());
+                if(lwp==0){
+                    continue;
+                }
+                if(Integer.valueOf(l1.getLp())==30000){
+                    continue;
+                }
+                for (Lp l2: lpList) {
+                    Integer rwp = Integer.valueOf(l2.getRtotal())-
+                            Integer.valueOf(l2.getRp());
+                    if(rwp==0){
+                        continue;
+                    }
+                    if(Integer.valueOf(l2.getLp())==30000){
+                        continue;
+                    }
+                    //产生碰撞
+                    p = lwp - rwp;
+                    if(p<=0){
+                        p = lwp;
+                    }else{
+                        p = rwp;
+                    }
+                    Integer newRp = Integer.valueOf(l2.getRp())+p;
+                    l2.setRp(newRp.toString());
+                    l2.preUpdate();
+                    lpDao.update(l2);
+                    if(p == lwp){
+                        break;
+                    }else{
+                        continue;
+                    }
+                }
+                Integer newLp = Integer.valueOf(l1.getLp())+p;
+                l1.setLp(newLp.toString());
+                l1.preUpdate();
+                lpDao.update(l1);
+
+				countReward(user,"0.05",p.toString(),"dp");//TODO 处理级别配置
+				String[] repersons = user.getRePersons().split(",");
+				if(repersons.length>1){
+					int countLd = 0;
+					while (countLd>=5||countLd>=repersons.length+1){
+						User ldUser = UserUtils.get(repersons[repersons.length-1-countLd]);
+						//TODO 处理级别配置
+						String ldPoint = new BigDecimal(p).multiply(new BigDecimal("0.05")).toString();
+						countReward(ldUser,"0.05",ldPoint,"ld");
+						countLd++;
+					}
+				}
+
+				break;
+            }
+        }
+	}
+
+	/**
+	 * 处理量碰表  单数 新增或者修改
+	 * @param user
+	 */
+	private void dealLp(User user) {
+		Integer level = Integer.valueOf(user.getLinkLevel());
+		for (int i = level-1; i>0;i--) {
+            String[] linkPersons = user.getLinkPersons().split(",");
+			Integer lpLevel = level - i;
+            Lp lp = new Lp(UserUtils.getByLoginName(linkPersons[i]),"0","0","0","0",lpLevel.toString());
+            if(lpDao.get(lp)!= null){
+                lp = lpDao.get(lp);
+                if(i==level-1){
+                    Integer newRtotal = Integer.valueOf(lp.getRtotal())+
+                            Integer.valueOf(user.getLevel());
+                    lp.setRtotal(newRtotal.toString());
+                }else{
+                    User sideUser = UserUtils.getByLoginName(linkPersons[i+1]);
+                    if("0".equals(sideUser.getLinkSide())){
+                        Integer newLtotal = Integer.valueOf(lp.getLtotal())+
+                                Integer.valueOf(user.getLevel());
+                        lp.setLtotal(newLtotal.toString());
+                    }else{
+                        Integer newRtotal = Integer.valueOf(lp.getRtotal())+
+                                Integer.valueOf(user.getLevel());
+                        lp.setRtotal(newRtotal.toString());
+                    }
+                }
+                lp.preUpdate();
+                lpDao.update(lp);
+            }else{
+            	System.out.println(lp.getUser().getId());
+                lp.setLtotal(user.getLevel());
+                lp.preInsert();
+                lpDao.insert(lp);
+            }
+        }
+	}
+
+	/**
 	 *
 	 * @param rewardUser  奖励对象
 	 * @param percent 百分比
@@ -272,19 +363,13 @@ public class SystemService extends BaseService implements InitializingBean {
 		rewardDetail.setWkf(wkf.toString());
 		rewardDetail.setYxf(yxf.toString());
 		if("ld".equals(type)){
-			rewardDetail.setTj("0");
 			rewardDetail.setLd(rewardPoint.toString());
-			rewardDetail.setDp("0");
 		}
 		if("dp".equals(type)){
-			rewardDetail.setTj("0");
-			rewardDetail.setLd("0");
 			rewardDetail.setDp(rewardPoint.toString());
 		}
 		if("tj".equals(type)){
 			rewardDetail.setTj(rewardPoint.toString());
-			rewardDetail.setDp("0");
-			rewardDetail.setLd("0");
 		}
 		rewardDetail.preInsert();
 		rewardDetailDao.insert(rewardDetail);
@@ -679,24 +764,37 @@ public class SystemService extends BaseService implements InitializingBean {
 	 * @param
 	 * @return
 	 */
-	public UserTreeNode getUserTreeData(){
+	public UserTreeNode getUserTreeData(String userId,String fromUserId){
 		UserTreeNode userTree = new UserTreeNode();
-		User curUser = UserUtils.getUser().getCurrentUser();
-		userTree.setName(UserUtils.getUser().getLoginName());
+		User curUser = StringUtils.isEmpty(userId)?UserUtils.getUser().getCurrentUser():
+				UserUtils.getByLoginName(userId);
+		userTree.setName(curUser.getLoginName());
 		userTree.setId(curUser.getLoginName());
+		userTree.setParentId(curUser.getLinkperson());
+		userTree.setSide(curUser.getLinkSide());
+		userTree.setClassName(StringUtils.isEmpty(userId)?"root-node":"drill-up");
 		userTree.setChildren(new ArrayList<UserTreeNode>());
+		Lp curLp = lpDao.getCount(curUser);
 		userTree.setTitle(userTree.getName()+"-"+DictUtils.getDictLabel(
-				curUser.getLevel(),"USER_LEVEL", "管理员"));
+				curUser.getLevel(),"USER_LEVEL", "管理员")
+		+"<br >|"+curLp.getLtotal()+"|总|"+curLp.getRtotal()+"|");
 		List<User> userChilds = userDao.getChildren(curUser.getLoginName(),curUser.getDbName());
 		List<UserTreeNode> childs = new ArrayList<UserTreeNode>();
 		for (User user :
 				userChilds) {
+			Lp newLp = lpDao.getCount(user);
 			UserTreeNode newUserTree = new UserTreeNode();
 			newUserTree.setName(user.getLoginName());
-			newUserTree.setTitle(user.getName()+"-"+user.getLevel());
+			if(newLp != null){
+				newUserTree.setTitle(user.getName()+"-"+user.getLevel()
+						+"<br >|"+newLp.getLtotal()+"|总|"+newLp.getRtotal()+"|");
+			}else{
+				newUserTree.setTitle(user.getName()+"-"+user.getLevel());
+			}
 			newUserTree.setParentId(user.getLinkperson());
 			newUserTree.setId(user.getLoginName());
 			newUserTree.setChildren(new ArrayList<UserTreeNode>());
+			newUserTree.setSide(user.getLinkSide());
 			childs.add(newUserTree);
 			if(curUser.getLoginName().equals(user.getLinkperson())){
 				userTree.getChildren().add(newUserTree);
@@ -708,7 +806,6 @@ public class SystemService extends BaseService implements InitializingBean {
 			int childCount = 0;
 			for(UserTreeNode node2 : childs){
 				if(node2.getParentId()!=null && node2.getParentId().equals(node1.getId())){
-
 					if(node1.getChildren() == null)
 						node1.setChildren(new ArrayList<UserTreeNode>());
 					node1.getChildren().add(node2);
@@ -718,33 +815,35 @@ public class SystemService extends BaseService implements InitializingBean {
 			}
 			if(childCount==0){
 				noChildNodes.add(node1);
-			}
-			if(childCount==1){
+			}else if(childCount==1){
 				oneChildNodes.add(node1);
+				node1.setClassName("drill-down");
+			}else{
+				node1.setClassName("drill-down");
 			}
 		}
 		for (UserTreeNode noChildNode: noChildNodes) {
 			noChildNode.getChildren().add(new UserTreeNode(
 					"点击注册","点击注册","",noChildNode.getId()
-					,"null"
+					,"null","0"
 			));
 		}
 		for (UserTreeNode oneChildNode: oneChildNodes) {
 			oneChildNode.getChildren().add(new UserTreeNode(
 					"点击注册","点击注册","",oneChildNode.getId()
-					,"null"
-			));
-		}
-		if(userTree.getChildren().size()==0){
-			userTree.getChildren().add(new UserTreeNode(
-					"点击注册","点击注册","",userTree.getId()
-					,"null"
+					,"null","1"
 			));
 		}
 		if(userTree.getChildren().size()==1){
 			userTree.getChildren().add(new UserTreeNode(
 					"点击注册","点击注册","",userTree.getId()
-					,"null"
+					,"null","1"
+			));
+		}
+		if(userTree.getChildren().size()==0){
+			userTree.getChildren().add(new UserTreeNode(
+					"点击注册","点击注册","",userTree.getId()
+					,"null","0"
 			));
 		}
 		return userTree;
@@ -755,15 +854,18 @@ public class SystemService extends BaseService implements InitializingBean {
 	 * @param
 	 * @return
 	 */
-	public UserTreeNode getUserReTreeData(){
+	public UserTreeNode getUserReTreeData(String userId){
 		UserTreeNode userTree = new UserTreeNode();
-		User curUser = UserUtils.getUser().getCurrentUser();
+		User curUser = StringUtils.isEmpty(userId)?UserUtils.getUser().getCurrentUser():
+				UserUtils.getByLoginName(userId);
 		userTree.setId(curUser.getLoginName());
-		userTree.setName(UserUtils.getUser().getLoginName());
-		userTree.setChildren(new ArrayList<UserTreeNode>());
+		userTree.setName(curUser.getLoginName());
+		userTree.setParentId(curUser.getRePerson());
+		userTree.setClassName(StringUtils.isEmpty(userId)?"root-node":"drill-up");
 		userTree.setTitle(curUser.getName()+"-"+DictUtils.getDictLabel(curUser.getLevel(),
 				"USER_LEVEL",
 				"管理员"));
+		userTree.setChildren(new ArrayList<UserTreeNode>());
 		List<User> userChilds = userDao.getReChildren(curUser.getLoginName(),curUser.getDbName());
 		List<UserTreeNode> childs = new ArrayList<UserTreeNode>();
 		for (User user : userChilds) {
@@ -784,6 +886,7 @@ public class SystemService extends BaseService implements InitializingBean {
 					if(node2.getChildren() == null)
 						node2.setChildren(new ArrayList<UserTreeNode>());
 					node2.getChildren().add(node1);
+					node2.setClassName("drill-down");
 					break;
 				}
 			}

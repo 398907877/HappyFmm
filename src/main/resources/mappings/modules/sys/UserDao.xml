@@ -81,6 +81,7 @@
 		a.update_date,
 		a.del_flag,
 		a.level,
+		a.link_side,
 		a.linkperson,
 		a.link_level,
 		a.link_persons,
@@ -90,6 +91,8 @@
 		a.gwf,
 		a.yxf,
 		a.wkf,
+		a.jhf,
+		a.qzf,
     	c.name AS "company.name",
     	c.parent_id AS "company.parent.id",
     	c.parent_ids AS "company.parentIds",
@@ -178,6 +181,7 @@
 		a.update_by AS "updateBy.id",
 		a.update_date,
 		a.del_flag,
+		a.link_side,
 		a.linkperson,
 		a.link_level ,
 		a.link_persons,
@@ -188,7 +192,7 @@
 		WHERE d.type='USER_LEVEL' AND a.link_persons like <if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
 		<if test="dbName == 'mssql'">'%,'+#{id}+',%'</if>
 		<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
-		ORDER BY a.create_date
+		ORDER BY a.link_side
 	</select>
 	<select id="getReChildren" resultType="User">
 		SELECT
@@ -317,6 +321,7 @@
 			login_flag, 
 			photo,
 			level,
+			link_side,
 			linkperson,
 			link_level,
 			link_persons,
@@ -326,6 +331,8 @@
 			gwf,
 			yxf,
 			wkf,
+			jhf,
+			qzf,
 			del_flag
 		) VALUES (
 			#{id}, 
@@ -347,6 +354,7 @@
 			#{loginFlag}, 
 			#{photo},
 			#{level},
+			#{linkLevel},
 			#{linkperson},
 			#{linkLevel},
 			#{linkPersons},
@@ -356,6 +364,8 @@
 			#{gwf},
 			#{yxf},
 			#{wkf},
+			#{jhf},
+			#{qzf},
 			#{delFlag}
 		)
 	</insert>
@@ -387,6 +397,8 @@
 			re_persons=#{rePersons},
 			wkf = #{wkf},
 			yxf = #{yxf},
+			jhf = #{jhf},
+			qzf = #{qzf},
 			photo = #{photo}
 		WHERE id = #{id}
 	</update>

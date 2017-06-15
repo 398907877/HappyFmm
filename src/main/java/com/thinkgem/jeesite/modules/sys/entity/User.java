@@ -50,6 +50,27 @@ public class User extends DataEntity<User> {
 	private String gwf;//购物分
 	private String yxf;
 	private String wkf;
+	private String jhf;
+	private String qzf;
+
+	@Length(min=0, max=100)
+	public String getJhf() {
+		return jhf;
+	}
+
+	public void setJhf(String jhf) {
+		this.jhf = jhf;
+	}
+
+	@Length(min=0, max=100)
+	public String getQzf() {
+		return qzf;
+	}
+
+	public void setQzf(String qzf) {
+		this.qzf = qzf;
+	}
+
 	@Length(min=0, max=100)
 	public String getYxf() {
 		return yxf;
@@ -104,6 +125,16 @@ public class User extends DataEntity<User> {
 	private String rePersons;//所有上级推荐人
 	private String reLevel;//推荐树等级
 	private String level;//用户等级
+	private String linkSide;//用户区域
+
+	@Length(min=0, max=10)
+	public String getLinkSide() {
+		return linkSide;
+	}
+
+	public void setLinkSide(String linkSide) {
+		this.linkSide = linkSide;
+	}
 
 	@Length(min=0, max=10)
 	public String getLinkLevel() {

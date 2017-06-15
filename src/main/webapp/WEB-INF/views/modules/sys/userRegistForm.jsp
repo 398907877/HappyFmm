@@ -39,6 +39,7 @@
 	<form:form id="inputForm" modelAttribute="user" action="${ctx}/sys/user/saveRegist" method="post" class="form-horizontal">
 		<form:hidden path="id"/>
 		<form:hidden path="gwf"/>
+		<form:hidden path="linkSide"/>
 		<sys:message content="${message}"/>
 		<div class="control-group">
 			<label class="control-label">头像:</label>
@@ -86,7 +87,7 @@
 		</div>
 	</c:if>
 		<div class="control-group">
-			<label class="control-label">姓名:</label>
+			<label class="control-label">姓名${user.linkSide}:</label>
 			<div class="controls">
 				<form:input path="name" htmlEscape="false" maxlength="50" class="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
@@ -143,6 +144,14 @@
 				<form:input path="mobile" htmlEscape="false" maxlength="100"/>
 			</div>
 		</div>
+		<form:hidden path="roleIdList" value="6"></form:hidden>
+		<%--<div class="control-group">
+			<label class="control-label">用户角色:</label>
+			<div class="controls">
+				<form:checkboxes path="roleIdList" items="${allRoles}" itemLabel="name" itemValue="id" htmlEscape="false" class="required"/>
+				<span class="help-inline"><font color="red">*</font> </span>
+			</div>
+		</div>--%>
 		<div class="control-group">
 			<label class="control-label">是否允许登录:</label>
 			<div class="controls">

@@ -12,6 +12,8 @@ public class UserTreeNode {
 
     private String className;
 
+    private String side;//0 左边   1右边
+
     private List<UserTreeNode> children;
 
     public String getTitle() {
@@ -66,7 +68,7 @@ public class UserTreeNode {
 
     private String id;
 
-    public UserTreeNode(String title, String name, String className, String parentId, String id) {
+    public UserTreeNode(String title, String name, String className, String parentId, String id,String side) {
         this.title = title;
         this.name = name;
         this.className = className;
@@ -76,5 +78,13 @@ public class UserTreeNode {
 
     public UserTreeNode(){
 
+    }
+
+    public String getSide() {
+        return side;
+    }
+
+    public void setSide(String side) {
+        this.side = side;
     }
 }
