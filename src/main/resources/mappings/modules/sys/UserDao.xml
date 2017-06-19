@@ -358,7 +358,7 @@
 			#{loginFlag}, 
 			#{photo},
 			#{level},
-			#{linkLevel},
+			#{linkSide},
 			#{linkperson},
 			#{linkLevel},
 			#{linkPersons},

@@ -246,9 +246,11 @@ public class UserController extends BaseController {
 			BigDecimal curQzf = new BigDecimal(UserUtils.getUser().getQzf());
 			if(curJhf.compareTo(jhf)<0){
 				addMessage(redirectAttributes, "您的激活分不足，不允许操作！");
+				return registForm(user, request,model);
 			}
 			if(curQzf.compareTo(qzf)<0){
 				addMessage(redirectAttributes, "您的权证分不足，不允许操作！");
+				return registForm(user, request,model);
 			}
 			UserUtils.getUser().setJhf(curJhf.subtract(jhf).toString());
 			UserUtils.getUser().setQzf(curQzf.subtract(qzf).toString());
@@ -260,6 +262,7 @@ public class UserController extends BaseController {
 			UserUtils.clearCache();
 			//UserUtils.getCacheMap().clear();
 		}
+
 		addMessage(redirectAttributes, "保存用户'" + user.getLoginName() + "'成功");
 		return "redirect:" + adminPath + "/sys/user/userTreeView?type=0";
 	}

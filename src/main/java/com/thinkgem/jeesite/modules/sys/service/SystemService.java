@@ -238,8 +238,9 @@ public class SystemService extends BaseService implements InitializingBean {
 	 */
 	private void countDp(User user) {
 		String[] linkPersons = user.getLinkPersons().split(",");
-		for (int i = 2; i < linkPersons.length; i++) {
-            Lp lp = new Lp(UserUtils.getByLoginName(linkPersons[i]));
+		for (int i = 1; i < linkPersons.length; i++) {
+			User dpUser = UserUtils.getByLoginName(linkPersons[i]);
+            Lp lp = new Lp(dpUser);
             List<Lp> lpList = lpDao.findList(lp);
             for (Lp l1 : lpList) {
                 Integer p = 0;
@@ -281,13 +282,13 @@ public class SystemService extends BaseService implements InitializingBean {
                 l1.setLp(newLp.toString());
                 l1.preUpdate();
                 lpDao.update(l1);
-
-				countReward(user,"0.05",p.toString(),"dp");//TODO 处理级别配置
-				String[] repersons = user.getRePersons().split(",");
-				if(repersons.length>1){
+				String[] repersons = dpUser.getRePersons().split(",");
+				if(p>0){
+					countReward(dpUser,"0.05",p.toString(),"dp");//TODO 处理级别配置
 					int countLd = 0;
-					while (countLd>=5||countLd>=repersons.length+1){
-						User ldUser = UserUtils.get(repersons[repersons.length-1-countLd]);
+					while (countLd<=5&&countLd<repersons.length-1){
+						System.out.println(countLd);
+						User ldUser = UserUtils.getByLoginName(repersons[repersons.length-1-countLd]);
 						//TODO 处理级别配置
 						String ldPoint = new BigDecimal(p).multiply(new BigDecimal("0.05")).toString();
 						countReward(ldUser,"0.05",ldPoint,"ld");
@@ -331,7 +332,6 @@ public class SystemService extends BaseService implements InitializingBean {
                 lp.preUpdate();
                 lpDao.update(lp);
             }else{
-            	System.out.println(lp.getUser().getId());
                 lp.setLtotal(user.getLevel());
                 lp.preInsert();
                 lpDao.insert(lp);
@@ -775,6 +775,11 @@ public class SystemService extends BaseService implements InitializingBean {
 		userTree.setClassName(StringUtils.isEmpty(userId)?"root-node":"drill-up");
 		userTree.setChildren(new ArrayList<UserTreeNode>());
 		Lp curLp = lpDao.getCount(curUser);
+		if(curLp == null){
+			curLp = new Lp();
+			curLp.setLtotal("0");
+			curLp.setRtotal("0");
+		}
 		userTree.setTitle(userTree.getName()+"-"+DictUtils.getDictLabel(
 				curUser.getLevel(),"USER_LEVEL", "管理员")
 		+"<br >|"+curLp.getLtotal()+"|总|"+curLp.getRtotal()+"|");

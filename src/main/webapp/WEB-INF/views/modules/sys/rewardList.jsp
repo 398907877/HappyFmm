@@ -23,7 +23,7 @@
 	</div>
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="${ctx}/sys/user/list">奖励明细</a></li>
-		<shiro:hasPermission name="sys:user:edit"><li><a href="${ctx}/sys/user/form">用户添加</a></li></shiro:hasPermission>
+
 	</ul>
 	<form:form id="searchForm" modelAttribute="rewardDetail" action="${ctx}/sys/user/rewardList" method="post" class="breadcrumb form-search ">
 		<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>

@@ -87,7 +87,7 @@
 		</div>
 	</c:if>
 		<div class="control-group">
-			<label class="control-label">姓名${user.linkSide}:</label>
+			<label class="control-label">姓名:</label>
 			<div class="controls">
 				<form:input path="name" htmlEscape="false" maxlength="50" class="required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
