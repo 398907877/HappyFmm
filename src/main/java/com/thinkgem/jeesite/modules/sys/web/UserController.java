@@ -130,7 +130,6 @@ public class UserController extends BaseController {
 		return "modules/sys/userForm";
 	}
 
-	@RequiresPermissions("sys:user:view")
 	@RequestMapping(value = "registForm")
 	public String registForm(User user,HttpServletRequest request, Model model) {
 		if(user.getLoginName() != null){
